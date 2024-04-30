@@ -1,53 +1,70 @@
 <link href="https://cdn.jsdelivr.net/npm/daisyui@4.10.2/dist/full.min.css" rel="stylesheet" type="text/css" />
 <script src="https://cdn.tailwindcss.com"></script>
-<!--네비바-->
-<div class="navbar bg-lime-600">
-    <div class="flex-1">
-        <a class="btn btn-ghost text-xl">
-            <!-- 이미지 크기를 조절하는 스타일을 추가 -->
-            <img src="https://i.imgur.com/VF9dTpa.png" alt="Logo" style="max-height: 40px;">
-        </a>
-        <ul style="list-style-type: none;">
-            <li><a>피드</a></li>
-        </ul>
-        <ul style="list-style-type: none;">
-            <li><a>Link</a></li>
-        </ul>
-    </div>
-    <div class="flex-none">
-        <button class="btn btn-square btn-ghost">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-5 h-5 stroke-current">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"></path>
-            </svg>
-        </button>
+
+<style>
+    .navbar {
+        background-color: #f2f2f2;
+    }
+</style>
+<nav th:replace="~{navbar :: navbarFragment}"></nav>
+
+<!--중간 배너-->
+<div class="hero min-h-screen bg-base-200">
+    <div class="hero-content text-center">
+        <div class="max-w-md">
+            <img src="https://i.imgur.com/djvwuQh.png" alt="Logo">
+            <h1 class="text-5xl font-bold">오.공.하</h1>
+            <p class="py-6">공부를 하고 싶은 사람들이 공부를 위해 모인 곳</p>
+
+            <!-- DRAWER 부분 시작 -->
+            <div class="drawer drawer-end">
+                <input id="my-drawer-4" type="checkbox" class="drawer-toggle" />
+                <div class="drawer-content">
+                    <!-- Page content here -->
+                    <label for="my-drawer-4" class="drawer-button btn btn-primary">공부 시작하기</label>
+                </div>
+                <div class="drawer-side">
+                    <label for="my-drawer-4" aria-label="close sidebar" class="drawer-overlay"></label>
+                    <ul class="menu p-4 w-80 min-h-full bg-base-200 text-base-content">
+                        <!-- Sidebar content here -->
+                        <li><a></a></li>
+                        <li><a></a></li>
+                        <li><a></a></li>
+                        <li><a>회원가입</a></li>
+                        <li><a>로그인</a></li>
+                        <li>
+                            <details open>
+                                <summary>게시판</summary>
+                                <ul>
+                                    <li>
+                                        <details open>
+                                            <summary>공부 게시판</summary>
+                                            <ul>
+                                                <li><a>Submenu 1</a></li>
+                                                <li><a>Submenu 2</a></li>
+                                            </ul>
+                                        </details>
+                                    </li>
+                                    <li>
+                                        <details open>
+                                            <summary>자유 게시판</summary>
+                                            <ul>
+                                                <li><a>Submenu 1</a></li>
+                                                <li><a>Submenu 2</a></li>
+                                            </ul>
+                                        </details>
+                                    </li>
+                                </ul>
+                            </details>
+                        </li>
+                        <li><a></a></li>
+                    </ul>
+                </div>
+            </div>
+            <!-- DRAWER 부분 끝 -->
+        </div>
     </div>
 </div>
-<!--아래 화면-->
-<div class="hero min-h-screen bg-lime-600 flex items-center justify-center">
-    <div class="flex flex-col w-full lg:flex-row">
-        <div class="grid flex-grow h-32 card rounded-box place-items-center">
 
-            <h1 class="text-5xl font-bold text-white">오.공.하</h1>
-            <p class="py-6 text-white">공부하고 싶은 사람들이 공부하기 위해 만든 사이트</p>
-            <button class="btn btn-primary">공부 처음 시작하기</button>
-            <hr>
-            <hr>
-            <hr>
-            <button class="btn btn-primary">공부 다시 시작하기</button>
-        </div>
-        <div class="divider lg:divider-horizontal"></div>
-        <div class="grid flex-grow h-100 card rounded-box place-items-center">
-            <h1 class="text-3xl font-bold text-white">오.공.하의 특징</h1>
-            <ul class="steps steps-vertical">
-                <li class="text-1xl font-bold text-white step step-primary">일정관리</li>
-                <li class="text-1xl font-bold text-white step step-primary">족보공유</li>
-                <li class="text-1xl font-bold text-white step">원할한 커뮤니케이션</li>
-                <li class="text-1xl font-bold text-white step">휴식도 공부의 일종</li>
-            </ul>
-        </div>
-    </div>
-        <div>
-
-        </div>
-    </div>
-</div>
+<!--풋화면-->
+<footer th:replace="~{footer :: footerFragment}"></footer>
