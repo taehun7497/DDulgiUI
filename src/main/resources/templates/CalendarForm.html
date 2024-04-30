@@ -1,0 +1,35 @@
+<!--daisyUI-->
+<link href="https://cdn.jsdelivr.net/npm/daisyui@4.10.2/dist/full.min.css" rel="stylesheet" type="text/css"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<!--네비바-->
+<nav th:replace="~{navbar :: navbarFragment}" class="navbar fixed top-0 z-50"></nav>
+
+<!--달력 및 세부 내용-->
+<div class="flex flex-col w-full lg:flex-row mt-20 ml-10">
+    <!-- 달력 -->
+    <div class="flex-grow place-items-center">
+        <h1>시험 일정 달력</h1>
+        <div id='calendar'></div>
+        <br>
+        <button onclick="location.href='#'" style="border-radius: 10px; padding: 10px 20px; border: none; background-color: black; color: white; text-align: center; display: inline-block; font-size: 16px; cursor: pointer;">일정추가</button>
+    </div>
+    <div class="divider lg:divider-horizontal"></div>
+    <!-- 일정 추가 버튼 -->
+    <!-- 세부내용 -->
+    <div class="flex-grow place-items-center">
+        <h1>이번 달 시험 일정 세부내용</h1>
+        <div class="artboard phone-1 bg-base-300">320×568</div>
+    </div>
+</div>
+
+<!-- FullCalendar를 초기화하고 렌더링하는 스크립트를 body 바로 아래에 배치 -->
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth'
+        });
+        calendar.render();
+    });
+</script>

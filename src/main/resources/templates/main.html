@@ -1,4 +1,4 @@
-<link href="https://cdn.jsdelivr.net/npm/daisyui@4.10.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+<link href="https://cdn.jsdelivr.net/npm/daisyui@4.10.2/dist/full.min.css" rel="stylesheet" type="text/css"/>
 <script src="https://cdn.tailwindcss.com"></script>
 
 <style>
@@ -30,8 +30,9 @@
                         <li><a></a></li>
                         <li><a></a></li>
                         <li><a></a></li>
-                        <li><a>회원가입</a></li>
-                        <li><a>로그인</a></li>
+                        <li><a th:href="@{user/signup}">회원가입</a></li>
+                        <li><a th:href="@{user/login}">로그인</a></li>
+                        <li><a th:href="@{calendar}">시험 일정 달력</a></li>
                         <li>
                             <details open>
                                 <summary>게시판</summary>
