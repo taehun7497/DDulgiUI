@@ -21,4 +21,8 @@ public class EventForm {
     @NotEmpty(message = "종료 날짜는 필수항목입니다.")
     private LocalDateTime endDate;    // LocalDateTime 타입 사용
 
+    private String registrationLink;
+
+    private Calendar calendar;
+
 }

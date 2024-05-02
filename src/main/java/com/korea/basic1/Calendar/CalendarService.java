@@ -1,8 +1,10 @@
 package com.korea.basic1.Calendar;
 
 
+import com.korea.basic1.DataNotFoundException;
 import com.korea.basic1.Event.Event;
 import com.korea.basic1.Event.EventRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,38 +13,42 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class CalendarService {
-    @Autowired
-    private CalendarRepository calendarRepository;
 
-    @Autowired
-    private EventRepository eventRepository;
+    private final CalendarRepository calendarRepository;
+    private final EventRepository eventRepository;
 
-    public Calendar createCalendar(List<Event> events) {
-        Calendar calendar = new Calendar();
-        calendar.setCreateDate(LocalDateTime.now());
-        calendar.setModifyDate(LocalDateTime.now());
-        calendar.setEventList(events);
-        return calendarRepository.save(calendar);
+    public Calendar createCalendar() {
+        Calendar c = new Calendar();
+        return calendarRepository.save(c);
     }
 
-    public Event createEvent(String title, LocalDateTime startDate, LocalDateTime endDate, Calendar calendar) {
-        Event event = new Event();
-        event.setTitle(title);
-        event.setStartDate(startDate);
-        event.setEndDate(endDate);
-        event.setCalendar(calendar);
-        return eventRepository.save(event);
-    }
+    public void addEvent(Long calendarId, Long eventId){
+        Optional<Calendar> calendar = calendarRepository.findById(calendarId);
+        Optional<Event> event = eventRepository.findById(eventId);
 
-    public Calendar findById(Long id) {
-        Optional<Calendar> calendar = calendarRepository.findById(id);
-        if (calendar.isPresent()) {
-            return calendar.get();
-        } else {
-            // 예외를 던질 수 있습니다. 예를 들어 CalendarNotFoundException 등
-            throw new RuntimeException("Calendar not found with id: " + id);
+        if(calendar.isPresent() && event.isPresent()){
+            Calendar targetCalendar = calendar.get();
+            Event targetEvent = event.get();
+
+            targetEvent.setCalendar(targetCalendar);
+            eventRepository.save(targetEvent);
+        }
+        else{
+            throw new DataNotFoundException("달력이나 일정을 찾을 수 없음");
         }
     }
+
+    public Calendar getcalendar(Long id){
+        Optional<Calendar> calendar = this.calendarRepository.findById(id);
+        if (calendar.isPresent()) {
+            Calendar currentCalendar = calendar.get();
+            return calendar.get();
+        } else {
+            throw new DataNotFoundException("달력을 찾을 수 없습니다.");
+        }
+    }
+
 
 }

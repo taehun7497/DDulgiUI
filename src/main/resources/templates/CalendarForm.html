@@ -1,20 +1,33 @@
-<!--daisyUI-->
+<!-- DaisyUI & Tailwind CSS -->
 <link href="https://cdn.jsdelivr.net/npm/daisyui@4.10.2/dist/full.min.css" rel="stylesheet" type="text/css"/>
 <script src="https://cdn.tailwindcss.com"></script>
-<!--네비바-->
+<!-- 네비바 -->
 <nav th:replace="~{navbar :: navbarFragment}" class="navbar fixed top-0 z-50"></nav>
 
-<!--달력 및 세부 내용-->
+<!-- 달력 및 세부 내용 -->
 <div class="flex flex-col w-full lg:flex-row mt-20 ml-10">
     <!-- 달력 -->
     <div class="flex-grow place-items-center">
         <h1>시험 일정 달력</h1>
         <div id='calendar'></div>
         <br>
-        <button onclick="location.href='#'" style="border-radius: 10px; padding: 10px 20px; border: none; background-color: black; color: white; text-align: center; display: inline-block; font-size: 16px; cursor: pointer;">일정추가</button>
+        <!-- 일정 추가 버튼 -->
+        <button id="addEventBtn" style="border-radius: 10px; padding: 10px 20px; border: none; background-color: black; color: white; text-align: center; display: inline-block; font-size: 16px; cursor: pointer;">일정추가</button>
+        <!-- 이벤트 추가 모달 -->
+        <div id="eventModal" style="display:none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 1000;">
+            <div>
+                <label>제목:</label>
+                <input type="text" id="eventTitle"><br>
+                <label>시작 시간:</label>
+                <input type="datetime-local" id="eventStart"><br>
+                <label>종료 시간:</label>
+                <input type="datetime-local" id="eventEnd"><br>
+                <button id="saveEvent" style="border-radius: 10px; padding: 10px 20px; border: none; background-color: black; color: white; text-align: center; display: inline-block; font-size: 16px; cursor: pointer;">이벤트 저장</button>
+            </div>
+        </div>
     </div>
     <div class="divider lg:divider-horizontal"></div>
-    <!-- 일정 추가 버튼 -->
+
     <!-- 세부내용 -->
     <div class="flex-grow place-items-center">
         <h1>이번 달 시험 일정 세부내용</h1>
@@ -22,14 +35,74 @@
     </div>
 </div>
 
-<!-- FullCalendar를 초기화하고 렌더링하는 스크립트를 body 바로 아래에 배치 -->
+<!-- FullCalendar & Scripts -->
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
 <script>
+
+
     document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth'
+            initialView: 'dayGridMonth',
         });
         calendar.render();
+
+        calendar.addEvent({
+            title: 'aaaa',
+            start: '2024-05-01',
+            end: '2024-05-02'
+        });
+
+        document.getElementById('addEventBtn').addEventListener('click', function() {
+            document.getElementById('eventModal').style.display = 'block';
+        });
+
+       document.getElementById('saveEvent').addEventListener('click', function() {
+            var title = document.getElementById('eventTitle').value;
+            var start = document.getElementById('eventStart').value;
+            var end = document.getElementById('eventEnd').value;
+
+            // ISO format for full-day or specific time events if necessary
+            var startISO = new Date(start).toISOString();
+            var endISO = new Date(end).toISOString();
+
+            fetch('/calendar/events', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    title: title,
+                    startDate: startISO,
+                    endDate: endISO
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    return response.json().then(data => {
+                        throw new Error(data.message || '이벤트 저장에 실패했습니다');
+                    });
+                }
+            })
+            .then(data => {
+                console.log("Event data received:", data);
+                calendar.addEvent({
+                    title: data.title,
+                    start: data.startDate,
+                    end: data.endDate
+                });
+
+                document.getElementById('eventModal').style.display = 'none';
+                document.getElementById('eventTitle').value = '';
+                document.getElementById('eventStart').value = '';
+                document.getElementById('eventEnd').value = '';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error: ' + error.message);
+            });
+        });
     });
 </script>

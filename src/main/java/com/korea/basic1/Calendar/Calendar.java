@@ -17,16 +17,8 @@ public class Calendar {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH")
-    private LocalDateTime createDate;  // LocalDateTime 타입 사용
-
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH")
-    private LocalDateTime modifyDate;  // LocalDateTime 타입 사용
-
     @OneToMany(mappedBy = "calendar", cascade = CascadeType.REMOVE)
     private List<Event> eventList;
 
-    private Integer subjectNumber;
-
-    private Integer detailSubjectNumber;
+    private LocalDateTime createDate;
 }

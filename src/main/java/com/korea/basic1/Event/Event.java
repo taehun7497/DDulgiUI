@@ -19,14 +19,14 @@ public class Event {
 
     private String title;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH")
-    private LocalDateTime startDate;  // LocalDateTime 타입 사용
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime startDate;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH")
-    private LocalDateTime endDate;    // LocalDateTime 타입 사용
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime endDate;
 
     private String registrationLink;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Calendar calendar;
 }
