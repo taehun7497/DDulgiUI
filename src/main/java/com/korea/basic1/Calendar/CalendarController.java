@@ -30,7 +30,7 @@ public class CalendarController {
                              ) {
         Calendar calendar = this.calendarService.getcalendar(calendarId);
 
-        model.addAttribute("categoryId", calendarId);
+        model.addAttribute("calendarId", calendarId);
         return "calendarForm";
     }
 
