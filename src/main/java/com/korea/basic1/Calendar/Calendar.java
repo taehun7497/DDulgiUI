@@ -1,5 +1,6 @@
 package com.korea.basic1.Calendar;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.korea.basic1.Event.Event;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -17,6 +18,7 @@ public class Calendar {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "calendar", cascade = CascadeType.REMOVE)
     private List<Event> eventList;
 

@@ -10,7 +10,7 @@
 </head>
 <body>
 <!-- 네비바 -->
-<nav class="navbar fixed top-0 z-50"></nav>
+<nav th:replace="~{navbar :: navbarFragment}" class="navbar fixed top-0 z-50"></nav>
 
 <!-- 달력 및 세부 내용 -->
 <div class="flex flex-col w-full lg:flex-row mt-20 ml-10">
@@ -47,98 +47,105 @@
 
 <!-- FullCalendar & Scripts -->
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
         });
-        calendar.render();
+        calendar.render(); // FullCalendar 인스턴스를 렌더링합니다.
+
+        const calendarId = window.location.pathname.split('/').pop(); // URL에서 ID 추출
+
+        // 캘린더 ID로 이벤트 불러오기
+        fetchEventsForCalendar(calendarId, calendar);
 
         document.getElementById('addEventBtn').addEventListener('click', function() {
             document.getElementById('eventModal').style.display = 'block';
         });
-
-        fetchEventsForCalendar(1); // calendar_id 1로 이벤트 불러오기
 
         document.getElementById('saveEvent').addEventListener('click', function() {
             addEventToCalendar(calendar);
         });
     });
 
-    function fetchEventsForCalendar(calendarId) {
-        fetch(`/calendar/${calendarId}`)
-        .then(response => response.json())
+    function fetchEventsForCalendar(calendarId, calendar) { // calendar를 함수 인수로 받아옵니다.
+        fetch(`http://localhost:8088/calendar/${calendarId}/events`) // 이 부분은 경로 변수로 올바르게 설정되어 있습니다.
+        .then(response => {
+            const contentType = response.headers.get("content-type");
+            if (!response.ok || !contentType || !contentType.includes("application/json")) {
+                return response.text().then(text => {
+                    throw new Error('서버에서 정상적인 JSON 응답이 아닙니다: ' + text);
+                });
+            }
+            return response.json();
+        })
         .then(events => {
             events.forEach(event => {
-                calendar.addEvent({
+                calendar.addEvent({ // calendar.addEvent를 호출합니다.
                     title: event.title,
                     start: event.startDate,
                     end: event.endDate
                 });
             });
         })
-        .catch(error => console.error('이벤트 불러오기 오류:', error));
-    }
-
-  function addEventToCalendar(calendar) {
-    var calendar_id = document.getElementById('calendar_id').value;
-    var title = document.getElementById('eventTitle').value;
-    var start = document.getElementById('eventStart').value;
-    var end = document.getElementById('eventEnd').value;
-
-    if (isNaN(new Date(start).getTime()) || isNaN(new Date(end).getTime())) {
-        console.error('유효하지 않은 날짜 입력');
-        alert('날짜 입력이 올바르지 않습니다.');
-        return;
-    }
-
-    var startISO = new Date(start).toISOString();
-    var endISO = new Date(end).toISOString();
-
-    // JSON.stringify()를 사용하여 JSON 형식으로 변환
-    var jsonData = JSON.stringify({
-        "calendar_id": parseInt(calendar_id, 10),
-        "title": title,
-        "startDate": startISO,
-        "endDate": endISO
-    });
-
-    console.log("파싱된 데이터:", jsonData);
-
-    fetch('/calendar/events', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: jsonData
-    })
-
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('네트워크 응답이 실패했습니다.');
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log("파싱된 데이터:", data);
-        calendar.addEvent({
-            title: data.title,
-            start: data.startDate,
-            end: data.endDate
+        .catch(error => {
+            console.error('이벤트 불러오기 오류:', error);
+            alert('오류: ' + error.message);
         });
+    }
 
-        document.getElementById('eventModal').style.display = 'none';
-        document.getElementById('calendar_id').value = '';
-        document.getElementById('eventTitle').value = '';
-        document.getElementById('eventStart').value = '';
-        document.getElementById('eventEnd').value = '';
-    })
-    .catch(error => {
-        console.error('오류:', error);
-        alert('오류: ' + error.message);
-    });
-}
+    function addEventToCalendar(calendar) { // calendar를 함수 인수로 받아옵니다.
+        var calendar_id = document.getElementById('calendar_id').value;
+        var title = document.getElementById('eventTitle').value;
+        var start = document.getElementById('eventStart').value;
+        var end = document.getElementById('eventEnd').value;
+
+        // 이벤트 객체를 생성합니다.
+        var event = {
+            title: title,
+            start: new Date(start),
+            end: new Date(end)
+        };
+
+        fetch('/calendar/events', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                calendar_id: parseInt(calendar_id, 10),
+                title: title,
+                startDate: event.start.toISOString(),
+                endDate: event.end.toISOString()
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('네트워크 응답이 실패했습니다.');
+            }
+            return response.json();
+        })
+        .then(data => {
+            calendar.addEvent({ // calendar.addEvent를 호출합니다.
+                title: data.title,
+                start: data.startDate,
+                end: data.endDate
+            });
+
+            // 입력 필드 초기화 및 이벤트 모달 숨기기
+            document.getElementById('eventModal').style.display = 'none';
+            document.getElementById('calendar_id').value = '';
+            document.getElementById('eventTitle').value = '';
+            document.getElementById('eventStart').value = '';
+            document.getElementById('eventEnd').value = '';
+        })
+        .catch(error => {
+            console.error('오류:', error);
+            alert('오류: ' + error.message);
+        });
+    }
 </script>
 </body>
 </html>

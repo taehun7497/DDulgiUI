@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @RequiredArgsConstructor
 @Controller
@@ -34,24 +36,31 @@ public class CalendarController {
         return "calendarForm";
     }
 
-    @GetMapping("/events")
-    public ResponseEntity<List<Event>> getEventsByCalendarId(@RequestParam Long calendarId) {
+    @GetMapping("/{calendarId}/events")
+    public ResponseEntity<?> getEventsByCalendarId(@PathVariable Long calendarId) {
         List<Event> events = eventService.findByCalendarId(calendarId);
         if (events != null && !events.isEmpty()) {
             return ResponseEntity.ok(events);
         } else {
-            return ResponseEntity.notFound().build();
+            // JSON 형태의 에러 메시지 반환
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\":\"No events found for this calendar.\"}");
         }
     }
 
     @PostMapping("/events")
     public ResponseEntity<?> createEvent(@RequestBody EventForm eventForm) {
-        Event createdEvent = eventService.create(eventForm.getTitle(), eventForm.getStartDate(),
-                eventForm.getEndDate(), eventForm.getRegistrationLink(), eventForm.getCalendar_id());
-        if (createdEvent != null) {
-            return ResponseEntity.ok(createdEvent); // 이벤트 객체를 반환
-        } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("이벤트 생성 실패");
+        try {
+            Event createdEvent = eventService.create(eventForm.getTitle(), eventForm.getStartDate(),
+                    eventForm.getEndDate(), eventForm.getRegistrationLink(), eventForm.getCalendar_id());
+            if (createdEvent != null) {
+                return ResponseEntity.ok(createdEvent);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"error\":\"Invalid event data provided.\"}");
+            }
+        } catch (Exception e) {
+            // 서버 내부 오류를 로깅
+            Logger.getLogger(CalendarController.class.getName()).log(Level.SEVERE, "Internal server error", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"error\":\"Internal server error occurred.\"}");
         }
     }
 
