@@ -27,12 +27,12 @@ public class CalendarController {
     private final EventService eventService;
 
     @GetMapping("/{calendarId}")
-    public String viewCalendar(Model model,
-                               @PathVariable(name = "calendarId") Long calendarId
-                             ) {
-        Calendar calendar = this.calendarService.getcalendar(calendarId);
+    public String viewCalendar(Model model, @PathVariable(name = "calendarId") Long calendarId) {
+        List<Event> events = this.eventService.findByCalendarId(calendarId);
 
         model.addAttribute("calendarId", calendarId);
+        model.addAttribute("events", events); // 이벤트 리스트를 모델에 추가
+
         return "calendarForm";
     }
 

@@ -41,7 +41,14 @@
     <!-- 세부내용 -->
     <div class="flex-grow place-items-center">
         <h1>이번 달 시험 일정 세부내용</h1>
-        <div class="artboard phone-1 bg-base-300">320×568</div>
+        <div class="artboard phone-1 bg-base-300">
+            <ul>
+                <!-- 이벤트 리스트를 동적으로 생성하기 위해 타임리프 반복문을 사용합니다. -->
+                <li th:each="event : ${events}">
+                    <span th:text="${event.title} + ' - ' + ${event.startDate} + ' ~ ' + ${event.endDate}"></span>
+                </li>
+            </ul>
+        </div>
     </div>
 </div>
 
