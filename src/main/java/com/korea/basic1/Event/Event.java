@@ -1,6 +1,7 @@
 package com.korea.basic1.Event;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.korea.basic1.Calendar.Calendar;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -27,6 +28,7 @@ public class Event {
 
     private String registrationLink;
 
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     private Calendar calendar;
 }

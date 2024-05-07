@@ -34,9 +34,20 @@ public class CalendarController {
         return "calendarForm";
     }
 
+    @GetMapping("/events")
+    public ResponseEntity<List<Event>> getEventsByCalendarId(@RequestParam Long calendarId) {
+        List<Event> events = eventService.findByCalendarId(calendarId);
+        if (events != null && !events.isEmpty()) {
+            return ResponseEntity.ok(events);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @PostMapping("/events")
     public ResponseEntity<?> createEvent(@RequestBody EventForm eventForm) {
-        Event createdEvent = eventService.create(eventForm.getTitle(), eventForm.getStartDate(), eventForm.getEndDate(), eventForm.getRegistrationLink(), eventForm.getCalendar_id());
+        Event createdEvent = eventService.create(eventForm.getTitle(), eventForm.getStartDate(),
+                eventForm.getEndDate(), eventForm.getRegistrationLink(), eventForm.getCalendar_id());
         if (createdEvent != null) {
             return ResponseEntity.ok(createdEvent); // 이벤트 객체를 반환
         } else {

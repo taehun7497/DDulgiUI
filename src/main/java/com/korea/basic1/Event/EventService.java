@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -35,5 +36,9 @@ public class EventService {
 
     public void delete(Event event){
         this.eventRepository.delete(event);
+    }
+
+    public List<Event> findByCalendarId(Long calendarId) {
+        return eventRepository.findByCalendarId(calendarId);
     }
 }
