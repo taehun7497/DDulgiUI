@@ -23,6 +23,6 @@ public class EventForm {
 
     private String registrationLink;
 
-    private Calendar calendar;
+    private Long calendar_id;  // Calendar 객체 대신 ID 사용
 
 }

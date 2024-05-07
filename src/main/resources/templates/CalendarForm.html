@@ -1,8 +1,16 @@
-<!-- DaisyUI & Tailwind CSS -->
-<link href="https://cdn.jsdelivr.net/npm/daisyui@4.10.2/dist/full.min.css" rel="stylesheet" type="text/css"/>
-<script src="https://cdn.tailwindcss.com"></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>시험 일정 달력</title>
+    <!-- DaisyUI & Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.10.2/dist/full.min.css" rel="stylesheet" type="text/css"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
 <!-- 네비바 -->
-<nav th:replace="~{navbar :: navbarFragment}" class="navbar fixed top-0 z-50"></nav>
+<nav class="navbar fixed top-0 z-50"></nav>
 
 <!-- 달력 및 세부 내용 -->
 <div class="flex flex-col w-full lg:flex-row mt-20 ml-10">
@@ -16,6 +24,8 @@
         <!-- 이벤트 추가 모달 -->
         <div id="eventModal" style="display:none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 1000;">
             <div>
+                <label>달력 번호:</label>
+                <input type="number" id="calendar_id"><br>
                 <label>제목:</label>
                 <input type="text" id="eventTitle"><br>
                 <label>시작 시간:</label>
@@ -38,8 +48,6 @@
 <!-- FullCalendar & Scripts -->
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
 <script>
-
-
     document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -47,47 +55,52 @@
         });
         calendar.render();
 
-        calendar.addEvent({
-            title: 'aaaa',
-            start: '2024-05-01',
-            end: '2024-05-02'
-        });
-
         document.getElementById('addEventBtn').addEventListener('click', function() {
             document.getElementById('eventModal').style.display = 'block';
         });
 
-       document.getElementById('saveEvent').addEventListener('click', function() {
+        document.getElementById('saveEvent').addEventListener('click', function() {
+            var calendar_id = document.getElementById('calendar_id').value;
             var title = document.getElementById('eventTitle').value;
             var start = document.getElementById('eventStart').value;
             var end = document.getElementById('eventEnd').value;
 
-            // ISO format for full-day or specific time events if necessary
+            // 날짜 유효성 검사
+            if (isNaN(new Date(start).getTime()) || isNaN(new Date(end).getTime())) {
+                console.error('Invalid date input');
+                alert('날짜 입력이 올바르지 않습니다.');
+                return;
+            }
+
             var startISO = new Date(start).toISOString();
             var endISO = new Date(end).toISOString();
+
+            // 특수 문자 이스케이프
+            title = title.replace(/"/g, '\\"');
+
+            var jsonData = JSON.stringify({
+                calendar_id: parseInt(calendar_id, 10),
+                title: title,
+                startDate: startISO,
+                endDate: endISO
+            });
+
+            console.log('JSON Data:', jsonData);
 
             fetch('/calendar/events', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    title: title,
-                    startDate: startISO,
-                    endDate: endISO
-                })
+                body: jsonData
             })
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    return response.json().then(data => {
-                        throw new Error(data.message || '이벤트 저장에 실패했습니다');
-                    });
-                }
+            .then(response => response.text())
+            .then(text => {
+                console.log("Raw response:", text);
+                return JSON.parse(text);
             })
             .then(data => {
-                console.log("Event data received:", data);
+                console.log("Parsed data:", data);
                 calendar.addEvent({
                     title: data.title,
                     start: data.startDate,
@@ -95,6 +108,7 @@
                 });
 
                 document.getElementById('eventModal').style.display = 'none';
+                document.getElementById('calendar_id').value = '';
                 document.getElementById('eventTitle').value = '';
                 document.getElementById('eventStart').value = '';
                 document.getElementById('eventEnd').value = '';
@@ -106,3 +120,5 @@
         });
     });
 </script>
+</body>
+</html>

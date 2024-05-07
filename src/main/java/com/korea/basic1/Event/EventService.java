@@ -14,12 +14,13 @@ public class EventService {
     private final EventRepository eventRepository;
     private final CalendarService calendarService;
 
-    public Event create(String title, LocalDateTime startDate, LocalDateTime endDate, String link, Calendar calendar){
+    public Event create(String title, LocalDateTime startDate, LocalDateTime endDate, String link, Long calendarId){
         Event e = new Event();
         e.setTitle(title);
         e.setStartDate(startDate);
         e.setEndDate(endDate);
         e.setRegistrationLink(link);
+        Calendar calendar = calendarService.getcalendar(calendarId);
         e.setCalendar(calendar);
         return eventRepository.save(e); // 저장된 이벤트 객체 반환
     }

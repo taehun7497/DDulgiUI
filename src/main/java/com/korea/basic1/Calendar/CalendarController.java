@@ -36,7 +36,7 @@ public class CalendarController {
 
     @PostMapping("/events")
     public ResponseEntity<?> createEvent(@RequestBody EventForm eventForm) {
-        Event createdEvent = eventService.create(eventForm.getTitle(), eventForm.getStartDate(), eventForm.getEndDate(), eventForm.getRegistrationLink(), eventForm.getCalendar());
+        Event createdEvent = eventService.create(eventForm.getTitle(), eventForm.getStartDate(), eventForm.getEndDate(), eventForm.getRegistrationLink(), eventForm.getCalendar_id());
         if (createdEvent != null) {
             return ResponseEntity.ok(createdEvent); // 이벤트 객체를 반환
         } else {
