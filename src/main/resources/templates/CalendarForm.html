@@ -81,14 +81,43 @@
                         <tr th:each="event, iterStat : ${eventsForMonth}" class="flex-wrap w-full lg:w-3/4">
                             <!-- 이벤트의 순서와 제목, 기간 출력 -->
                             <td th:text="${iterStat.index + 1 }"></td>
-                            <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 200px;" title="${event.title}" th:text="${event.title}"></td>
-                            <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 200px;" title="${event.startDate} + '~' + ${event.endDate}" th:text="${event.startDate} + '~' + ${event.endDate}"></td>
-                            <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 200px;">사이트 정보</td>
+                            <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 200px;"
+                                title="${event.title}" th:text="${event.title}"></td>
+                            <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 200px;"
+                                title="${event.startDate} + '~' + ${event.endDate}"
+                                th:text="${event.startDate} + '~' + ${event.endDate}"></td>
+                            <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 200px;">
+                                사이트 정보
+                            </td>
                             <td> <!-- 수정 버튼 부분 -->
-                                <a th:href="@{'/calendar/modify/' + ${event.id}}"
-                                   style="display: inline-block; width: 20px; height: 20px; text-align: center; cursor: pointer;">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                                </a>
+                                <button class="btn" onclick="openModal('eventModal_${event.id}', '${event.id}')">Open modal</button>
+                                <!-- 모달 요소 -->
+                                <dialog id="eventModal_${event.id}" class="modal">
+                                    <div class="modal-box">
+                                        <h3 class="font-bold text-lg">Modify Event</h3>
+                                        <p class="py-4">Press ESC key or click the button below to close</p>
+                                        <div class="modal-action">
+                                            <form method="dialog">
+                                                <!-- 수정 양식 추가 -->
+                                                <label>Event Title:</label>
+                                                <input type="text" id="modifiedEventTitle" value="">
+                                                <br>
+                                                <label>Start Time:</label>
+                                                <input type="datetime-local" id="modifiedEventStart" value="">
+                                                <br>
+                                                <label>End Time:</label>
+                                                <input type="datetime-local" id="modifiedEventEnd" value="">
+                                                <br>
+                                                <!-- 수정 완료 버튼 -->
+                                                <button class="btn" onclick="saveModifiedEvent('${event.id}')">저장</button>
+                                                <!-- 모달 닫기 버튼 -->
+                                                <button class="btn" onclick="closeModal('eventModal_${event.id}')">
+                                                    Close
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </dialog>
                             </td>
                         </tr>
                         </tbody>
@@ -109,6 +138,7 @@
 <!-- FullCalendar & Scripts -->
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
+<script src="https://cdn.jsdelivr.net/npm/long/dist/long.js"></script> <!-- Long.js 라이브러리 추가 -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('calendar');
@@ -131,82 +161,168 @@
         });
     });
 
-    function fetchEventsForCalendar(calendarId, calendar) { // calendar를 함수 인수로 받아옵니다.
-        fetch(`http://localhost:8088/calendar/${calendarId}/events`) // 이 부분은 경로 변수로 올바르게 설정되어 있습니다.
-        .then(response => {
-            const contentType = response.headers.get("content-type");
-            if (!response.ok || !contentType || !contentType.includes("application/json")) {
-                return response.text().then(text => {
-                    throw new Error('서버에서 정상적인 JSON 응답이 아닙니다: ' + text);
-                });
-            }
-            return response.json();
-        })
-        .then(events => {
-            events.forEach(event => {
-                calendar.addEvent({ // calendar.addEvent를 호출합니다.
-                    title: event.title,
-                    start: event.startDate,
-                    end: event.endDate
-                });
+// events 변수 정의 및 초기화
+let events = [];
+
+// 이벤트 데이터를 가져오는 fetchEventsForCalendar 함수 내부에서 events 변수 업데이트
+function fetchEventsForCalendar(calendarId, calendar) {
+    fetch(`http://localhost:8088/calendar/${calendarId}/events`)
+    .then(response => {
+        const contentType = response.headers.get("content-type");
+        if (!response.ok || !contentType || !contentType.includes("application/json")) {
+            return response.text().then(text => {
+                throw new Error('서버에서 정상적인 JSON 응답이 아닙니다: ' + text);
             });
-        })
-        .catch(error => {
-            console.error('이벤트 불러오기 오류:', error);
-            alert('오류: ' + error.message);
+        }
+        return response.json();
+    })
+    .then(eventsData => {
+        // 가져온 이벤트 데이터를 events 변수에 저장
+        events = eventsData;
+
+        // FullCalendar에 이벤트 추가
+        events.forEach(event => {
+            calendar.addEvent({
+                title: event.title,
+                start: event.startDate,
+                end: event.endDate
+            });
         });
+    })
+    .catch(error => {
+        console.error('이벤트 불러오기 오류:', error);
+        alert('오류: ' + error.message);
+    });
+}
+
+function addEventToCalendar(calendar) { // calendar를 함수 인수로 받아옵니다.
+    var calendar_id = document.getElementById('calendar_id').value;
+    var title = document.getElementById('eventTitle').value;
+    var start = document.getElementById('eventStart').value;
+    var end = document.getElementById('eventEnd').value;
+
+    // 이벤트 객체를 생성합니다.
+    var event = {
+        title: title,
+        start: new Date(start),
+        end: new Date(end)
+    };
+
+    fetch('/calendar/events', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            calendar_id: parseInt(calendar_id, 10),
+            title: title,
+            startDate: event.start.toISOString(),
+            endDate: event.end.toISOString()
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('네트워크 응답이 실패했습니다.');
+        }
+        return response.json();
+    })
+    .then(data => {
+        calendar.addEvent({ // calendar.addEvent를 호출합니다.
+            title: data.title,
+            start: data.startDate,
+            end: data.endDate
+        });
+
+        // 입력 필드 초기화 및 이벤트 모달 숨기기
+        document.getElementById('eventModal').style.display = 'none';
+        document.getElementById('calendar_id').value = '';
+        document.getElementById('eventTitle').value = '';
+        document.getElementById('eventStart').value = '';
+        document.getElementById('eventEnd').value = '';
+    })
+    .catch(error => {
+        console.error('오류:', error);
+        alert('오류: ' + error.message);
+    });
+}
+
+ // 모달 열기 함수 수정
+  function openModal(modalId, eventId) {
+    var modal = document.getElementById(modalId);
+    modal.showModal();
+
+    // 수정 양식의 각 입력란에 이벤트 객체의 속성 값 할당
+    if (eventId) {
+        // 시작 시간 및 종료 시간을 ISO 형식으로 변환하여 할당
+        var event = events.find(event => event.id === eventId); // 이벤트 객체 찾기
+        if (event) {
+            document.getElementById('modifiedEventTitle').value = event.title;
+            document.getElementById('modifiedEventStart').value = event.start.toISOString().slice(0, 16); // 시작 시간 설정
+            document.getElementById('modifiedEventEnd').value = event.end.toISOString().slice(0, 16); // 종료 시간 설정
+
+            // 이벤트 ID를 Long으로 변환하여 할당
+            var eventIdLong = eventId;
+        }
+    }
+}
+
+    // 이벤트 ID를 Long으로 변환하는 함수
+    function toLong(eventId) {
+        return Long.fromString(eventId);
     }
 
-    function addEventToCalendar(calendar) { // calendar를 함수 인수로 받아옵니다.
-        var calendar_id = document.getElementById('calendar_id').value;
-        var title = document.getElementById('eventTitle').value;
-        var start = document.getElementById('eventStart').value;
-        var end = document.getElementById('eventEnd').value;
+function saveModifiedEvent(eventId) {
+    var modifiedEventTitle = document.getElementById('modifiedEventTitle').value;
+    var modifiedEventStart = document.getElementById('modifiedEventStart').value;
+    var modifiedEventEnd = document.getElementById('modifiedEventEnd').value;
 
-        // 이벤트 객체를 생성합니다.
-        var event = {
-            title: title,
-            start: new Date(start),
-            end: new Date(end)
-        };
+    // 이벤트 객체를 생성합니다.
+    var updatedEvent = {
+        title: modifiedEventTitle,
+        start: new Date(modifiedEventStart),
+        end: new Date(modifiedEventEnd)
+    };
 
-        fetch('/calendar/events', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                calendar_id: parseInt(calendar_id, 10),
-                title: title,
-                startDate: event.start.toISOString(),
-                endDate: event.end.toISOString()
-            })
-        })
+    // 이벤트 ID를 Long으로 변환합니다.
+    var eventIdLong = Long.fromString(eventId);
+
+    // 서버로 수정된 이벤트 정보 전송
+    fetch(`/calendar/modify/${eventIdLong.toString()}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(updatedEvent)
+    })
         .then(response => {
             if (!response.ok) {
-                throw new Error('네트워크 응답이 실패했습니다.');
+                throw new Error('이벤트 수정 실패');
             }
             return response.json();
         })
         .then(data => {
-            calendar.addEvent({ // calendar.addEvent를 호출합니다.
-                title: data.title,
-                start: data.startDate,
-                end: data.endDate
-            });
+            // 성공적으로 수정된 경우, 닫기 버튼을 클릭하여 모달을 닫습니다.
+            closeModal(`eventModal_${eventId}`);
 
-            // 입력 필드 초기화 및 이벤트 모달 숨기기
-            document.getElementById('eventModal').style.display = 'none';
-            document.getElementById('calendar_id').value = '';
-            document.getElementById('eventTitle').value = '';
-            document.getElementById('eventStart').value = '';
-            document.getElementById('eventEnd').value = '';
+            // FullCalendar에서 이벤트 업데이트
+            var event = calendar.getEventById(eventId);
+            if (event) {
+                event.setProp('title', data.title);
+                event.setStart(data.startDate);
+                event.setEnd(data.endDate);
+            }
         })
         .catch(error => {
-            console.error('오류:', error);
-            alert('오류: ' + error.message);
+            console.error('이벤트 수정 오류:', error);
+            alert('이벤트 수정 중 오류가 발생했습니다.');
         });
-    }
+}
+
+// 모달 닫기 함수
+function closeModal(modalId) {
+    var modal = document.getElementById(modalId);
+    modal.close();
+}
 </script>
 </body>
 </html>

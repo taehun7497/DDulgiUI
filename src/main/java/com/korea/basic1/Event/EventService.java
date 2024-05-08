@@ -2,6 +2,7 @@ package com.korea.basic1.Event;
 
 import com.korea.basic1.Calendar.Calendar;
 import com.korea.basic1.Calendar.CalendarService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -40,12 +41,26 @@ public class EventService {
         return eventRepository.save(e); // 저장된 이벤트 객체 반환
     }
 
-    public void modify(Event event, String title, LocalDateTime startDate, LocalDateTime EndDate, String link) {
+    public Event modify(Long eventId, String title, LocalDateTime startDate, LocalDateTime endDate, String registrationLink, Long calendarId) {
+        // 1. 주어진 이벤트 ID를 사용하여 데이터베이스에서 해당 이벤트를 조회합니다.
+        Event event = eventRepository.findById(eventId).orElse(null);
+
+        // 2. 조회된 이벤트가 존재하는지 확인합니다.
+        if (event == null) {
+            // 이벤트가 존재하지 않으면 예외를 발생시킵니다.
+            throw new EntityNotFoundException("Event not found with ID: " + eventId);
+        }
+
+        // 3. 클라이언트가 전송한 수정된 정보를 사용하여 이벤트를 업데이트합니다.
+        // 주로 이벤트의 제목, 시작일, 종료일, 등록 링크 등의 정보가 업데이트됩니다.
         event.setTitle(title);
         event.setStartDate(startDate);
-        event.setEndDate(EndDate);
-        event.setRegistrationLink(link);
-        this.eventRepository.save(event);
+        event.setEndDate(endDate);
+        event.setRegistrationLink(registrationLink);
+        // 다른 필드도 필요에 따라 업데이트할 수 있습니다.
+
+        // 4. 업데이트된 이벤트를 데이터베이스에 저장하고, 업데이트된 이벤트를 반환합니다.
+        return eventRepository.save(event);
     }
 
     public void delete(Event event) {
@@ -56,20 +71,9 @@ public class EventService {
         return eventRepository.findByCalendarId(calendarId);
     }
 
-//    public Event update(Long eventId, String title, LocalDateTime startDate, LocalDateTime endDate,
-//                        String registrationLink, Long calendarId) {
-//        Optional<Event> optionalEvent = eventRepository.findById(eventId);
-//        if (optionalEvent.isPresent()) {
-//            Event event = optionalEvent.get();
-//            event.setTitle(title);
-//            event.setStartDate(startDate);
-//            event.setEndDate(endDate);
-//            event.setRegistrationLink(registrationLink);
-//            // CalendarId도 업데이트가 필요하면 업데이트
-//            event.getCalendar(calendarId);
-//            return eventRepository.save(event);
-//        } else {
-//            return null;
-//        }
-//    }
+    public Event findById(Long eventId) {
+        // 이벤트 ID를 사용하여 데이터베이스에서 해당 이벤트를 조회합니다.
+        return eventRepository.findById(eventId)
+                .orElseThrow(() -> new EntityNotFoundException("Event not found with ID: " + eventId));
+    }
 }

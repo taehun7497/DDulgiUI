@@ -16,9 +16,11 @@ public class EventForm {
     private String title;
 
     @NotEmpty(message = "시작 날짜는 필수항목입니다.")
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime startDate;  // LocalDateTime 타입 사용
 
     @NotEmpty(message = "종료 날짜는 필수항목입니다.")
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime endDate;    // LocalDateTime 타입 사용
 
     private String registrationLink;
