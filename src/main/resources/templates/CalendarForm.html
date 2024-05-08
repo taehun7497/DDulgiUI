@@ -13,9 +13,9 @@
 <nav th:replace="~{navbar :: navbarFragment}" class="navbar fixed top-0 z-50"></nav>
 
 <!-- 달력 및 세부 내용 -->
-<div class="flex flex-col w-full lg:flex-row mt-20 ml-10">
+<div class="flex w-full lg:flex-row mt-10 lg:mt-20 mx-2 lg:mx-10">
     <!-- 달력 -->
-    <div class="flex-grow place-items-center">
+    <div class="flex-grow place-items-center lg:w-2/3">
         <h1>시험 일정 달력</h1>
         <div id='calendar'></div>
         <br>
@@ -39,15 +39,35 @@
     <div class="divider lg:divider-horizontal"></div>
 
     <!-- 세부내용 -->
-    <div class="flex-grow place-items-center">
-        <h1>이번 달 시험 일정 세부내용</h1>
-        <div class="artboard phone-1 bg-base-300">
-            <ul>
-                <!-- 이벤트 리스트를 동적으로 생성하기 위해 타임리프 반복문을 사용합니다. -->
-                <li th:each="event : ${events}">
-                    <span th:text="${event.title} + ' - ' + ${event.startDate} + ' ~ ' + ${event.endDate}"></span>
-                </li>
-            </ul>
+    <div class="flex flex-col lg:w-1/2 justify-center lg:justify-between gap-4 lg:gap-10 overflow-y-auto">
+        <!-- 버튼 및 이번 달 일정 -->
+        <div class="w-full px-2 mt-2 flex flex-wrap">
+            <div class="flex-cole">
+                <!-- 버튼 -->
+                <div class="flex justify-between mb-4">
+                    <form action="#" th:action="@{/calendar/{calendarId}(calendarId=${calendarId})}" method="get">
+                        <input type="hidden" name="calendarId" th:value="${calendarId}">
+                        <input type="hidden" name="targetMonth" th:value="${prevMonth}">
+                        <button type="submit" class="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded-md text-sm text-gray-800">이전 달</button>
+                    </form>
+                    <h1 class="text-xl font-semibold">이번 달 시험 일정 리스트</h1>
+                    <form action="#" th:action="@{/calendar/{calendarId}(calendarId=${calendarId})}" method="get">
+                        <input type="hidden" name="calendarId" th:value="${calendarId}">
+                        <input type="hidden" name="targetMonth" th:value="${nextMonth}">
+                        <button type="submit" class="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded-md text-sm text-gray-800">다음 달</button>
+                    </form>
+                </div>
+                <!-- 이번 달 이벤트 리스트 -->
+                <div class="artboard phone-1 bg-base-300 flex flex-wrap">
+                    <ul class="flex flex-wrap">
+                        <!-- Thymeleaf 반복문 -->
+                        <li th:each="event : ${eventsForMonth}" class="flex-none w-full lg:w-1/2">
+                            <!-- 이벤트의 제목과 기간 출력 -->
+                            <span th:text="${event.title} + ' - ' + ${event.startDate} + ' ~ ' + ${event.endDate}"></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -156,3 +176,6 @@
 </script>
 </body>
 </html>
+
+<!--풋화면-->
+<footer th:replace="~{footer :: footerFragment}"></footer>

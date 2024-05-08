@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -15,7 +16,16 @@ public class EventService {
     private final EventRepository eventRepository;
     private final CalendarService calendarService;
 
-    public Event create(String title, LocalDateTime startDate, LocalDateTime endDate, String link, Long calendarId){
+    public List<Event> getEventsForMonth(List<Event> allEvents, int targetMonth) {
+        // 주어진 이벤트 목록(allEvents)을 스트림으로 변환
+        return allEvents.stream()
+                // 각 이벤트 객체에 대해 시작일을 가져와서 그 달의 값이 타겟 달과 같은지 확인하는 필터링 조건을 적용
+                .filter(event -> event.getStartDate().getMonthValue() == targetMonth)
+                // .collect(Collectors.toList()): 필터링된 이벤트를 리스트로 수집하여 반환
+                .collect(Collectors.toList());
+    }
+
+    public Event create(String title, LocalDateTime startDate, LocalDateTime endDate, String link, Long calendarId) {
         Event e = new Event();
         e.setTitle(title);
         e.setStartDate(startDate);
@@ -26,7 +36,7 @@ public class EventService {
         return eventRepository.save(e); // 저장된 이벤트 객체 반환
     }
 
-    public void modify(Event event,String title, LocalDateTime startDate, LocalDateTime EndDate, String link){
+    public void modify(Event event, String title, LocalDateTime startDate, LocalDateTime EndDate, String link) {
         event.setTitle(title);
         event.setStartDate(startDate);
         event.setEndDate(EndDate);
@@ -34,7 +44,7 @@ public class EventService {
         this.eventRepository.save(event);
     }
 
-    public void delete(Event event){
+    public void delete(Event event) {
         this.eventRepository.delete(event);
     }
 

@@ -27,11 +27,33 @@ public class CalendarController {
     private final EventService eventService;
 
     @GetMapping("/{calendarId}")
-    public String viewCalendar(Model model, @PathVariable(name = "calendarId") Long calendarId) {
-        List<Event> events = this.eventService.findByCalendarId(calendarId);
+    public String viewCalendar(Model model, @PathVariable(name = "calendarId") String calendarId,
+                               @RequestParam(name = "targetMonth", required = false, defaultValue = "0") int targetMonth) {
+        Long parsedCalendarId;
+        try {
+            parsedCalendarId = Long.parseLong(calendarId);
+        } catch (NumberFormatException e) {
+            // 예외 처리
+            return "errorPage"; // 오류가 발생하면 적절한 에러 페이지로 리다이렉트합니다.
+        }
 
-        model.addAttribute("calendarId", calendarId);
-        model.addAttribute("events", events); // 이벤트 리스트를 모델에 추가
+        List<Event> events = this.eventService.findByCalendarId(parsedCalendarId);
+
+        // targetMonth가 0 이하면 현재 월의 값을 사용하여 이벤트 목록을 가져옴
+        if (targetMonth <= 0) {
+            LocalDateTime now = LocalDateTime.now();
+            targetMonth = now.getMonthValue();
+        }
+
+        int prevMonth = targetMonth - 1;
+        int nextMonth = targetMonth + 1;
+
+        List<Event> eventsForMonth = this.eventService.getEventsForMonth(events, targetMonth);
+
+        model.addAttribute("prevMonth", prevMonth);
+        model.addAttribute("nextMonth", nextMonth);
+        model.addAttribute("calendarId", parsedCalendarId);
+        model.addAttribute("eventsForMonth", eventsForMonth); // 이벤트 목록을 모델에 추가
 
         return "calendarForm";
     }
