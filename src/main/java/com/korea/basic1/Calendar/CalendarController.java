@@ -4,6 +4,7 @@ package com.korea.basic1.Calendar;
 import com.korea.basic1.Event.Event;
 import com.korea.basic1.Event.EventForm;
 import com.korea.basic1.Event.EventService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -11,8 +12,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.logging.Level;
@@ -25,6 +29,8 @@ public class CalendarController {
 
     private final CalendarService calendarService;
     private final EventService eventService;
+
+
 
     @GetMapping("/{calendarId}")
     public String viewCalendar(Model model, @PathVariable(name = "calendarId") String calendarId,
@@ -50,6 +56,7 @@ public class CalendarController {
 
         List<Event> eventsForMonth = this.eventService.getEventsForMonth(events, targetMonth);
 
+        model.addAttribute("targetMonth", targetMonth);
         model.addAttribute("prevMonth", prevMonth);
         model.addAttribute("nextMonth", nextMonth);
         model.addAttribute("calendarId", parsedCalendarId);

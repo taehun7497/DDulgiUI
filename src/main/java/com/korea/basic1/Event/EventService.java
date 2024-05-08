@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -20,8 +21,11 @@ public class EventService {
         // 주어진 이벤트 목록(allEvents)을 스트림으로 변환
         return allEvents.stream()
                 // 각 이벤트 객체에 대해 시작일을 가져와서 그 달의 값이 타겟 달과 같은지 확인하는 필터링 조건을 적용
-                .filter(event -> event.getStartDate().getMonthValue() == targetMonth)
-                // .collect(Collectors.toList()): 필터링된 이벤트를 리스트로 수집하여 반환
+                .filter(event -> {
+                    LocalDateTime startDate = event.getStartDate();
+                    return startDate != null && startDate.getMonthValue() == targetMonth;
+                })
+                // 필터링된 이벤트를 리스트로 수집하여 반환
                 .collect(Collectors.toList());
     }
 
@@ -51,4 +55,21 @@ public class EventService {
     public List<Event> findByCalendarId(Long calendarId) {
         return eventRepository.findByCalendarId(calendarId);
     }
+
+//    public Event update(Long eventId, String title, LocalDateTime startDate, LocalDateTime endDate,
+//                        String registrationLink, Long calendarId) {
+//        Optional<Event> optionalEvent = eventRepository.findById(eventId);
+//        if (optionalEvent.isPresent()) {
+//            Event event = optionalEvent.get();
+//            event.setTitle(title);
+//            event.setStartDate(startDate);
+//            event.setEndDate(endDate);
+//            event.setRegistrationLink(registrationLink);
+//            // CalendarId도 업데이트가 필요하면 업데이트
+//            event.getCalendar(calendarId);
+//            return eventRepository.save(event);
+//        } else {
+//            return null;
+//        }
+//    }
 }
