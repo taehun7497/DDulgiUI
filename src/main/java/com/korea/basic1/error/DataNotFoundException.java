@@ -1,4 +1,4 @@
-package com.korea.basic1;
+package com.korea.basic1.error;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

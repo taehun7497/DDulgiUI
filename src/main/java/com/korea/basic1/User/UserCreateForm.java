@@ -1,6 +1,5 @@
 package com.korea.basic1.User;
 
-
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
@@ -25,5 +24,17 @@ public class UserCreateForm {
     private String email;
 
     @NotEmpty(message = "사용자 닉네임은 필수항목입니다.")
-    private String usernickname;
+    private String nickname;
+
+    private String gender; // 라디오 버튼영어 값 받기
+
+    private String mobile;
+
+    private String location;
+
+    private String languages;
+
+    private String birthday;
+
+    private String agree;
 }

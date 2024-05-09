@@ -22,12 +22,22 @@ public class SiteUser {
     @Column(unique = true)
     private String email;
 
-    private String usernickname;
+    private String nickname;
+
+    private String userRole;
+
+    private String gender; // 라디오 버튼 값 받기
+
+    private String mobile;
+
+    private String location;
+
+    private String languages;
+
+    private String birthday;
 
     @Lob
     private byte[] profileImage;
-
-    // 다른 메서드들...
 
     public String getBase64EncodedProfileImage() {
         if (profileImage != null) {
