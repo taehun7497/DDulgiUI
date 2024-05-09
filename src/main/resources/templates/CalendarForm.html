@@ -74,7 +74,7 @@
                             <th style="width: 30%;">일정</th>
                             <th style="width: 25%;">날짜</th>
                             <th style="width: 25%;">사이트</th>
-                            <th style="width: 15%;">수정</th> <!-- 이 부분에 수정 -->
+                            <th style="width: 15%;">수정</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -90,9 +90,11 @@
                                 사이트 정보
                             </td>
                             <td> <!-- 수정 버튼 부분 -->
-                                <button class="btn" onclick="openModal('eventModal_${event.id}', '${event.id}')">Open modal</button>
+                            <!--onclick은 자바스크립트라 타임리프 문법 사용 x-->
+                                <button class="btn" onclick="openModal(this)" th:data-id="${event.id}">Op
+                                    en modal</button>
                                 <!-- 모달 요소 -->
-                                <dialog id="eventModal_${event.id}" class="modal">
+                                <dialog th:id="${'eventModal_' + event.id}" class="modal">
                                     <div class="modal-box">
                                         <h3 class="font-bold text-lg">Modify Event</h3>
                                         <p class="py-4">Press ESC key or click the button below to close</p>
@@ -109,9 +111,9 @@
                                                 <input type="datetime-local" id="modifiedEventEnd" value="">
                                                 <br>
                                                 <!-- 수정 완료 버튼 -->
-                                                <button class="btn" onclick="saveModifiedEvent('${event.id}')">저장</button>
+                                                <button class="btn" onclick="saveModifiedEvent(this)" th:data-id="${event.id}">저장</button>
                                                 <!-- 모달 닫기 버튼 -->
-                                                <button class="btn" onclick="closeModal('eventModal_${event.id}')">
+                                                <button class="btn" onclick="closeModal(this)" th:data-id="${'eventModal_' + event.id}">
                                                     Close
                                                 </button>
                                             </form>
@@ -247,22 +249,14 @@ function addEventToCalendar(calendar) { // calendar를 함수 인수로 받아�
 }
 
  // 모달 열기 함수 수정
-  function openModal(modalId, eventId) {
+function openModal(button) {
+    var eventId = button.getAttribute('data-id');
+    var modalId = 'eventModal_' + eventId;
     var modal = document.getElementById(modalId);
-    modal.showModal();
-
-    // 수정 양식의 각 입력란에 이벤트 객체의 속성 값 할당
-    if (eventId) {
-        // 시작 시간 및 종료 시간을 ISO 형식으로 변환하여 할당
-        var event = events.find(event => event.id === eventId); // 이벤트 객체 찾기
-        if (event) {
-            document.getElementById('modifiedEventTitle').value = event.title;
-            document.getElementById('modifiedEventStart').value = event.start.toISOString().slice(0, 16); // 시작 시간 설정
-            document.getElementById('modifiedEventEnd').value = event.end.toISOString().slice(0, 16); // 종료 시간 설정
-
-            // 이벤트 ID를 Long으로 변환하여 할당
-            var eventIdLong = eventId;
-        }
+    if (modal) {
+        modal.showModal();
+    } else {
+        console.error("Modal not found with ID:", modalId);
     }
 }
 
@@ -271,51 +265,46 @@ function addEventToCalendar(calendar) { // calendar를 함수 인수로 받아�
         return Long.fromString(eventId);
     }
 
-function saveModifiedEvent(eventId) {
+function saveModifiedEvent(button) {
     var modifiedEventTitle = document.getElementById('modifiedEventTitle').value;
     var modifiedEventStart = document.getElementById('modifiedEventStart').value;
     var modifiedEventEnd = document.getElementById('modifiedEventEnd').value;
+    var eventId = button.getAttribute('data-id');
+    console.log("Saving event:", eventId, modifiedEventTitle, modifiedEventStart, modifiedEventEnd);
 
-    // 이벤트 객체를 생성합니다.
     var updatedEvent = {
         title: modifiedEventTitle,
-        start: new Date(modifiedEventStart),
-        end: new Date(modifiedEventEnd)
+        startDate: new Date(modifiedEventStart),
+        endDate: new Date(modifiedEventEnd)
     };
 
-    // 이벤트 ID를 Long으로 변환합니다.
-    var eventIdLong = Long.fromString(eventId);
+    console.log("Updated event data:", JSON.stringify(updatedEvent));
 
-    // 서버로 수정된 이벤트 정보 전송
-    fetch(`/calendar/modify/${eventIdLong.toString()}`, {
+    // 이벤트 ID가 '0'이 아닌지 확인
+    if (eventId === '0' || eventId === '${event.id}') {
+        console.error("Invalid event ID:", eventId);
+        return; // 함수를 여기서 종료
+    }
+
+    fetch(`/calendar/modify/${eventId}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(updatedEvent)
     })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('이벤트 수정 실패');
-            }
-            return response.json();
-        })
-        .then(data => {
-            // 성공적으로 수정된 경우, 닫기 버튼을 클릭하여 모달을 닫습니다.
-            closeModal(`eventModal_${eventId}`);
-
-            // FullCalendar에서 이벤트 업데이트
-            var event = calendar.getEventById(eventId);
-            if (event) {
-                event.setProp('title', data.title);
-                event.setStart(data.startDate);
-                event.setEnd(data.endDate);
-            }
-        })
-        .catch(error => {
-            console.error('이벤트 수정 오류:', error);
-            alert('이벤트 수정 중 오류가 발생했습니다.');
-        });
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('이벤트 수정 실패');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log("Event updated successfully", data);
+    })
+    .catch(error => {
+        console.error('이벤트 수정 오류:', error);
+    });
 }
 
 // 모달 닫기 함수
