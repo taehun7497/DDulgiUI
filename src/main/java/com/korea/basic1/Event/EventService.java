@@ -33,6 +33,7 @@ public class EventService {
     public Event create(String title, LocalDateTime startDate, LocalDateTime endDate, String link, Long calendarId) {
         Event e = new Event();
         e.setTitle(title);
+        e.setCreateDate(LocalDateTime.now());
         e.setStartDate(startDate);
         e.setEndDate(endDate);
         e.setRegistrationLink(link);
@@ -57,6 +58,7 @@ public class EventService {
         event.setStartDate(startDate);
         event.setEndDate(endDate);
         event.setRegistrationLink(registrationLink);
+        event.setModifyDate(LocalDateTime.now());
         // 다른 필드도 필요에 따라 업데이트할 수 있습니다.
 
         // 4. 업데이트된 이벤트를 데이터베이스에 저장하고, 업데이트된 이벤트를 반환합니다.

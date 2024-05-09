@@ -20,6 +20,10 @@ public class Event {
 
     private String title;
 
+    private LocalDateTime createDate;
+
+    private LocalDateTime modifyDate;
+
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime startDate;
 

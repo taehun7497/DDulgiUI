@@ -90,7 +90,7 @@
                                 사이트 정보
                             </td>
                             <td> <!-- 수정 버튼 부분 -->
-                            <!--onclick은 자바스크립트라 타임리프 문법 사용 x-->
+                                <!--onclick은 자바스크립트라 타임리프 문법 사용 x-->
                                 <button class="btn" onclick="openModal(this)" th:data-id="${event.id}">Op
                                     en modal</button>
                                 <!-- 모달 요소 -->
@@ -102,13 +102,13 @@
                                             <form method="dialog">
                                                 <!-- 수정 양식 추가 -->
                                                 <label>Event Title:</label>
-                                                <input type="text" id="modifiedEventTitle" value="">
+                                                <input type="text" th:id="${'modifiedEventTitle_'+event.id}">
                                                 <br>
                                                 <label>Start Time:</label>
-                                                <input type="datetime-local" id="modifiedEventStart" value="">
+                                                <input type="datetime-local" th:id="${'modifiedEventStart_'+event.id}">
                                                 <br>
                                                 <label>End Time:</label>
-                                                <input type="datetime-local" id="modifiedEventEnd" value="">
+                                                <input type="datetime-local" th:id="${'modifiedEventEnd_'+event.id}">
                                                 <br>
                                                 <!-- 수정 완료 버튼 -->
                                                 <button class="btn" onclick="saveModifiedEvent(this)" th:data-id="${event.id}">저장</button>
@@ -253,6 +253,8 @@ function openModal(button) {
     var eventId = button.getAttribute('data-id');
     var modalId = 'eventModal_' + eventId;
     var modal = document.getElementById(modalId);
+
+
     if (modal) {
         modal.showModal();
     } else {
@@ -265,23 +267,24 @@ function openModal(button) {
         return Long.fromString(eventId);
     }
 
-function saveModifiedEvent(button) {
-    var modifiedEventTitle = document.getElementById('modifiedEventTitle').value;
-    var modifiedEventStart = document.getElementById('modifiedEventStart').value;
-    var modifiedEventEnd = document.getElementById('modifiedEventEnd').value;
+    function saveModifiedEvent(button) {
     var eventId = button.getAttribute('data-id');
+    var modifiedEventTitle = document.getElementById('modifiedEventTitle_' + eventId).value;
+    var modifiedEventStart = document.getElementById('modifiedEventStart_' + eventId).value;
+    var modifiedEventEnd = document.getElementById('modifiedEventEnd_' + eventId).value;
+
     console.log("Saving event:", eventId, modifiedEventTitle, modifiedEventStart, modifiedEventEnd);
 
     var updatedEvent = {
         title: modifiedEventTitle,
-        startDate: new Date(modifiedEventStart),
-        endDate: new Date(modifiedEventEnd)
+        startDate: modifiedEventStart,
+        endDate: modifiedEventEnd
     };
 
-    console.log("Updated event data:", JSON.stringify(updatedEvent));
+    console.log("Updated event data:", updatedEvent);
 
     // 이벤트 ID가 '0'이 아닌지 확인
-    if (eventId === '0' || eventId === '${event.id}') {
+    if (eventId === '0' || !eventId) {
         console.error("Invalid event ID:", eventId);
         return; // 함수를 여기서 종료
     }
