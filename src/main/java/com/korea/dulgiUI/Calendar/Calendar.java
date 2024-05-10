@@ -1,7 +1,7 @@
-package com.korea.basic1.Calendar;
+package com.korea.dulgiUI.Calendar;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.korea.basic1.Event.Event;
+import com.korea.dulgiUI.Event.Event;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

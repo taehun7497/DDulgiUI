@@ -1,4 +1,4 @@
-package com.korea.basic1.category;
+package com.korea.dulgiUI.category;
 
 import jakarta.persistence.*;
 import lombok.Getter;

@@ -1,23 +1,17 @@
-package com.korea.basic1.Calendar;
+package com.korea.dulgiUI.Calendar;
 
-
-import com.korea.basic1.Event.Event;
-import com.korea.basic1.Event.EventForm;
-import com.korea.basic1.Event.EventService;
-import jakarta.validation.Valid;
+import com.korea.dulgiUI.Event.Event;
+import com.korea.dulgiUI.Event.EventForm;
+import com.korea.dulgiUI.Event.EventService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.Calendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -112,12 +106,13 @@ public class CalendarController {
             if (createdEvent != null) {
                 return ResponseEntity.ok(createdEvent);
             } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"error\":\"Invalid event data provided.\"}");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"error\":\"Invalid event data provided.\"}"); //건들지 말것
             }
         } catch (Exception e) {
             // 서버 내부 오류를 로깅
             Logger.getLogger(CalendarController.class.getName()).log(Level.SEVERE, "Internal server error", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"error\":\"Internal server error occurred.\"}");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"error\":\"Internal server error occurred.\"}"); // 건들 ㄴㄴ
         }
     }
+
 }

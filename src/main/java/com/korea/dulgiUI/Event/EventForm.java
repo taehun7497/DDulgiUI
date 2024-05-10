@@ -1,7 +1,5 @@
-package com.korea.basic1.Event;
+package com.korea.dulgiUI.Event;
 
-import com.korea.basic1.Calendar.Calendar;
-import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.Setter;

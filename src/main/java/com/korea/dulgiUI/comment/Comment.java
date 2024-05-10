@@ -1,8 +1,8 @@
-package com.korea.basic1.comment;
+package com.korea.dulgiUI.comment;
 
-import com.korea.basic1.User.SiteUser;
-import com.korea.basic1.answer.Answer;
-import com.korea.basic1.question.Question;
+import com.korea.dulgiUI.User.SiteUser;
+import com.korea.dulgiUI.answer.Answer;
+import com.korea.dulgiUI.question.Question;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

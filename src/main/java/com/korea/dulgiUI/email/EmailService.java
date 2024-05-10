@@ -1,4 +1,4 @@
-package com.korea.basic1.email;
+package com.korea.dulgiUI.email;
 
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;

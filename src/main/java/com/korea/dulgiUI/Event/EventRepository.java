@@ -1,4 +1,4 @@
-package com.korea.basic1.Event;
+package com.korea.dulgiUI.Event;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

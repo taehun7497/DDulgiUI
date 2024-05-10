@@ -1,13 +1,13 @@
-package com.korea.basic1.question;
+package com.korea.dulgiUI.question;
 
-import com.korea.basic1.User.SiteUser;
-import com.korea.basic1.User.UserService;
-import com.korea.basic1.answer.Answer;
-import com.korea.basic1.answer.AnswerForm;
-import com.korea.basic1.answer.AnswerService;
-import com.korea.basic1.category.Category;
-import com.korea.basic1.category.CategoryService;
-import com.korea.basic1.comment.CommentForm;
+import com.korea.dulgiUI.User.SiteUser;
+import com.korea.dulgiUI.User.UserService;
+import com.korea.dulgiUI.answer.Answer;
+import com.korea.dulgiUI.answer.AnswerForm;
+import com.korea.dulgiUI.answer.AnswerService;
+import com.korea.dulgiUI.category.Category;
+import com.korea.dulgiUI.category.CategoryService;
+import com.korea.dulgiUI.comment.CommentForm;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

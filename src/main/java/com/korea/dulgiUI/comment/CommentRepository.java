@@ -1,4 +1,4 @@
-package com.korea.basic1.comment;
+package com.korea.dulgiUI.comment;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

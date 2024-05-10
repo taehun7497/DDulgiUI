@@ -1,6 +1,6 @@
 package com.korea.dulgiUI.User;
 
-import com.korea.basic1.error.DataNotFoundException;
+import com.korea.dulgiUI.error.DataNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;

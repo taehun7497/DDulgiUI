@@ -1,4 +1,4 @@
-<nav th:fragment="sidebarFragment" class="menu bg-base-200 lg:menu-horizontal rounded-box">
+<nav th:fragment="sidebarFragment" class="container-fluid menu bg-base-200 lg:menu-horizontal rounded-box">
     <ul class="menu bg-base-200 lg:menu-horizontal rounded-box">
         <li>
             <a th:classappend="${category} == 'qna' ? 'active'" th:href="@{/question/list/qna}">

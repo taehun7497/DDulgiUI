@@ -1,4 +1,4 @@
-package com.korea.basic1.answer;
+package com.korea.dulgiUI.answer;
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;

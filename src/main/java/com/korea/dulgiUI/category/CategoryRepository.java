@@ -1,4 +1,4 @@
-package com.korea.basic1.category;
+package com.korea.dulgiUI.category;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

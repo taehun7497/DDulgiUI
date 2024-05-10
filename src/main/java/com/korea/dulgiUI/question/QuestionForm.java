@@ -1,4 +1,4 @@
-package com.korea.basic1.question;
+package com.korea.dulgiUI.question;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;

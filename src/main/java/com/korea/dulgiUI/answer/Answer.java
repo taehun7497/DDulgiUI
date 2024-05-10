@@ -1,11 +1,14 @@
-package com.korea.basic1.answer;
+package com.korea.dulgiUI.answer;
 
 import com.korea.dulgiUI.User.SiteUser;
+import com.korea.dulgiUI.comment.Comment;
+import com.korea.dulgiUI.question.Question;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Getter

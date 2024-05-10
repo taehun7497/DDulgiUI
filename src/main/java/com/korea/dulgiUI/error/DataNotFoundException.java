@@ -1,4 +1,4 @@
-package com.korea.basic1.error;
+package com.korea.dulgiUI.error;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

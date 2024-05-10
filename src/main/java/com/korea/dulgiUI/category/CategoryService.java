@@ -1,6 +1,6 @@
-package com.korea.basic1.category;
+package com.korea.dulgiUI.category;
 
-import com.korea.basic1.error.DataNotFoundException;
+import com.korea.dulgiUI.error.DataNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

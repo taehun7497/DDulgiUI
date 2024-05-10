@@ -1,9 +1,8 @@
-package com.korea.basic1.Calendar;
+package com.korea.dulgiUI.Calendar;
 
-
-import com.korea.basic1.error.DataNotFoundException;
-import com.korea.basic1.Event.Event;
-import com.korea.basic1.Event.EventRepository;
+import com.korea.dulgiUI.Event.Event;
+import com.korea.dulgiUI.Event.EventRepository;
+import com.korea.dulgiUI.error.DataNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -46,6 +45,4 @@ public class CalendarService {
             throw new DataNotFoundException("달력을 찾을 수 없습니다.");
         }
     }
-
-
 }

@@ -1,7 +1,7 @@
-package com.korea.basic1.answer;
+package com.korea.dulgiUI.answer;
 
-import com.korea.basic1.User.SiteUser;
-import com.korea.basic1.question.Question;
+import com.korea.dulgiUI.User.SiteUser;
+import com.korea.dulgiUI.question.Question;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;

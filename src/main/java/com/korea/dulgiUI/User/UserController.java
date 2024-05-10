@@ -1,11 +1,11 @@
 package com.korea.dulgiUI.User;
 
-import com.korea.basic1.Message;
-import com.korea.basic1.answer.Answer;
-import com.korea.basic1.answer.AnswerService;
-import com.korea.basic1.email.EmailService;
-import com.korea.basic1.question.Question;
-import com.korea.basic1.question.QuestionService;
+import com.korea.dulgiUI.Message;
+import com.korea.dulgiUI.answer.Answer;
+import com.korea.dulgiUI.answer.AnswerService;
+import com.korea.dulgiUI.email.EmailService;
+import com.korea.dulgiUI.question.Question;
+import com.korea.dulgiUI.question.QuestionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -27,12 +27,12 @@ import java.util.Random;
 @Controller
 @RequestMapping("/user")
 public class UserController {
-    private final com.korea.basic1.User.UserService userService;
+    private final UserService userService;
     private final QuestionService questionService;
     private final AnswerService answerService;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
-    private final com.korea.basic1.User.UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/info")
