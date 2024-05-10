@@ -1,4 +1,4 @@
-package com.korea.basic1.User;
+package com.korea.dulgiUI.User;
 
 import com.korea.basic1.Message;
 import com.korea.basic1.answer.Answer;
@@ -27,12 +27,12 @@ import java.util.Random;
 @Controller
 @RequestMapping("/user")
 public class UserController {
-    private final UserService userService;
+    private final com.korea.basic1.User.UserService userService;
     private final QuestionService questionService;
     private final AnswerService answerService;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
-    private final UserRepository userRepository;
+    private final com.korea.basic1.User.UserRepository userRepository;
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/info")

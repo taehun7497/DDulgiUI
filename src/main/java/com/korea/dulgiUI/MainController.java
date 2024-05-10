@@ -1,4 +1,4 @@
-package com.korea.basic1;
+package com.korea.dulgiUI;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

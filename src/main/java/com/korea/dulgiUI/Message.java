@@ -1,4 +1,4 @@
-package com.korea.basic1;
+package com.korea.dulgiUI;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

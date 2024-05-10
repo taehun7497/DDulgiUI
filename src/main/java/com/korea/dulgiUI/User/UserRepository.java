@@ -1,4 +1,4 @@
-package com.korea.basic1.User;
+package com.korea.dulgiUI.User;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
