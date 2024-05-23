@@ -1,4 +1,4 @@
-package com.korea.dulgiUI.Calendar;
+package com.korea.dulgiUI.calendar;
 
 import com.korea.dulgiUI.Event.Event;
 import com.korea.dulgiUI.Event.EventForm;
@@ -11,7 +11,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.Calendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,7 +32,6 @@ public class CalendarController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\":\"Event not found.\"}");
         }
     }
-    //
 
     @PutMapping("/modify/{eventId}")
     public ResponseEntity<?> modifyEvent(@PathVariable Long eventId, @RequestBody EventForm eventForm) {
@@ -115,5 +113,4 @@ public class CalendarController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"error\":\"Internal server error occurred.\"}"); // 건들 ㄴㄴ
         }
     }
-
 }

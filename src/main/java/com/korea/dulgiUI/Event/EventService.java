@@ -1,7 +1,7 @@
 package com.korea.dulgiUI.Event;
 
-import com.korea.dulgiUI.Calendar.Calendar;
-import com.korea.dulgiUI.Calendar.CalendarService;
+import com.korea.dulgiUI.calendar.Calendar;
+import com.korea.dulgiUI.calendar.CalendarService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

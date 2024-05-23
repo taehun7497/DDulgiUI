@@ -1,4 +1,4 @@
-package com.korea.dulgiUI.Calendar;
+package com.korea.dulgiUI.calendar;
 
 import com.korea.dulgiUI.Event.Event;
 import com.korea.dulgiUI.Event.EventRepository;

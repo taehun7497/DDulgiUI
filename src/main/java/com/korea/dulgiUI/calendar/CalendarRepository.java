@@ -1,4 +1,4 @@
-package com.korea.dulgiUI.Calendar;
+package com.korea.dulgiUI.calendar;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

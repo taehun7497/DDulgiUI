@@ -1,4 +1,4 @@
-package com.korea.dulgiUI.Calendar;
+package com.korea.dulgiUI.calendar;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.korea.dulgiUI.Event.Event;

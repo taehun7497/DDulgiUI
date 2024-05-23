@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- DaisyUI and Tailwind CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.10.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.10.2/dist/full.min.css" rel="stylesheet" type="text/css"/>
     <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- SimpleMDE Markdown Editor -->
@@ -19,17 +19,15 @@
 <body>
 <nav th:replace="~{navbar :: navbarFragment}"></nav>
 
-<div class="container-fluid mt-3">
-    <div class="row">
-        <!-- Sidebar -->
-        <div class="col-sm-12 col-md-3 col-lg-2">
-            <nav th:replace="sidebar :: sidebarFragment"></nav>
-        </div>
-        <!-- Main Content -->
-        <div class="col-sm-12 col-md-9 col-lg-10">
-            <!-- Content Block -->
-            <th:block layout:fragment="content"></th:block>
-        </div>
+<div>
+    <!-- Sidebar -->
+    <div class="w-full">
+        <nav th:replace="sidebar :: sidebarFragment"></nav>
+    </div>
+    <!-- Main Content -->
+    <div class="w-full">
+        <!-- Content Block -->
+        <th:block layout:fragment="content"></th:block>
     </div>
 </div>
 <th:block layout:fragment="script"></th:block>
