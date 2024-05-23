@@ -21,8 +21,5 @@ public class EventForm {
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime endDate;    // LocalDateTime 타입 사용
 
-    private String registrationLink;
-
     private Long calendar_id;  // Calendar 객체 대신 ID 사용
-
 }

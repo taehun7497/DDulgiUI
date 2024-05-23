@@ -1,7 +1,7 @@
 package com.korea.dulgiUI.Event;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.korea.dulgiUI.Calendar.Calendar;
+import com.korea.dulgiUI.calendar.Calendar;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,8 +28,6 @@ public class Event {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime endDate;
-
-    private String registrationLink;
 
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)

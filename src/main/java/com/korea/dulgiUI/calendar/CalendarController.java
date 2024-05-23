@@ -1,4 +1,4 @@
-package com.korea.dulgiUI.Calendar;
+package com.korea.dulgiUI.calendar;
 
 import com.korea.dulgiUI.Event.Event;
 import com.korea.dulgiUI.Event.EventForm;
@@ -11,7 +11,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.Calendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,14 +32,13 @@ public class CalendarController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\":\"Event not found.\"}");
         }
     }
-    //
 
     @PutMapping("/modify/{eventId}")
     public ResponseEntity<?> modifyEvent(@PathVariable Long eventId, @RequestBody EventForm eventForm) {
         try {
             // 클라이언트로부터 전송된 이벤트 정보를 사용하여 이벤트를 수정합니다.
             Event modifiedEvent = eventService.modify(eventId, eventForm.getTitle(), eventForm.getStartDate(),
-                    eventForm.getEndDate(), eventForm.getRegistrationLink(), eventForm.getCalendar_id());
+                    eventForm.getEndDate(), eventForm.getCalendar_id());
             if (modifiedEvent != null) {
                 // 수정된 이벤트가 성공적으로 반환되면 200 OK 응답을 반환합니다.
                 return ResponseEntity.ok(modifiedEvent);
@@ -56,8 +54,10 @@ public class CalendarController {
     }
 
     @GetMapping("/{calendarId}")
-    public String viewCalendar(Model model, @PathVariable(name = "calendarId") String calendarId,
+    public String viewCalendar(Model model,
+                               @PathVariable(name = "calendarId") String calendarId,
                                @RequestParam(name = "targetMonth", required = false, defaultValue = "0") int targetMonth) {
+
         Long parsedCalendarId;
         try {
             parsedCalendarId = Long.parseLong(calendarId);
@@ -103,7 +103,7 @@ public class CalendarController {
     public ResponseEntity<?> createEvent(@RequestBody EventForm eventForm) {
         try {
             Event createdEvent = eventService.create(eventForm.getTitle(), eventForm.getStartDate(),
-                    eventForm.getEndDate(), eventForm.getRegistrationLink(), eventForm.getCalendar_id());
+                    eventForm.getEndDate(), eventForm.getCalendar_id());
             if (createdEvent != null) {
                 return ResponseEntity.ok(createdEvent);
             } else {
@@ -115,5 +115,4 @@ public class CalendarController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"error\":\"Internal server error occurred.\"}"); // 건들 ㄴㄴ
         }
     }
-
 }

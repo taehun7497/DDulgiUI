@@ -1,7 +1,7 @@
 package com.korea.dulgiUI.Event;
 
-import com.korea.dulgiUI.Calendar.Calendar;
-import com.korea.dulgiUI.Calendar.CalendarService;
+import com.korea.dulgiUI.calendar.Calendar;
+import com.korea.dulgiUI.calendar.CalendarService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,19 +29,18 @@ public class EventService {
                 .collect(Collectors.toList());
     }
 
-    public Event create(String title, LocalDateTime startDate, LocalDateTime endDate, String link, Long calendarId) {
+    public Event create(String title, LocalDateTime startDate, LocalDateTime endDate, Long calendarId) {
         Event e = new Event();
         e.setTitle(title);
         e.setCreateDate(LocalDateTime.now());
         e.setStartDate(startDate);
         e.setEndDate(endDate);
-        e.setRegistrationLink(link);
         Calendar calendar = calendarService.getcalendar(calendarId);
         e.setCalendar(calendar);
         return eventRepository.save(e); // 저장된 이벤트 객체 반환
     }
 
-    public Event modify(Long eventId, String title, LocalDateTime startDate, LocalDateTime endDate, String registrationLink, Long calendarId) {
+    public Event modify(Long eventId, String title, LocalDateTime startDate, LocalDateTime endDate, Long calendarId) {
         // 1. 주어진 이벤트 ID를 사용하여 데이터베이스에서 해당 이벤트를 조회합니다.
         Event event = eventRepository.findById(eventId).orElse(null);
 
@@ -56,7 +55,6 @@ public class EventService {
         event.setTitle(title);
         event.setStartDate(startDate);
         event.setEndDate(endDate);
-        event.setRegistrationLink(registrationLink);
         event.setModifyDate(LocalDateTime.now());
         // 다른 필드도 필요에 따라 업데이트할 수 있습니다.
 

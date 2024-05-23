@@ -16,4 +16,6 @@ public interface AnswerRepository extends JpaRepository<Answer, Integer> {
     Optional<List<Answer>> findAllByAuthor(SiteUser user);
 
     Page<Answer> findAllByQuestion(Question question, Specification<Answer> spec, Pageable pageable);
+
+    List<Answer> findByAuthorId(Long authorId);
 }

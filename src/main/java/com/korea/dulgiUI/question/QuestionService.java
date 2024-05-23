@@ -150,4 +150,8 @@ public class QuestionService {
         question.setView(question.getView() + 1);
         this.questionRepository.save(question);
     }
+
+    public List<Question> findByAuthorId(Long authorId) {
+        return questionRepository.findByAuthorId(authorId);
+    }
 }

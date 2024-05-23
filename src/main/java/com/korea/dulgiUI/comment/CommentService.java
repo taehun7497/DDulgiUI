@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -38,5 +39,9 @@ public class CommentService {
         comment.setCreateDate(LocalDateTime.now());
         this.commentRepository.save(comment);
         return comment;
+    }
+
+    public List<Comment> findByUserId(Long userId) {
+        return commentRepository.findByAuthor_Id(userId);
     }
 }

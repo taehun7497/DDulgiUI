@@ -97,4 +97,13 @@ public class UserService {
         siteUser.setNickname(nickname);
         userRepository.save(siteUser);
     }
+
+    public SiteUser getUserByUsername(String username) {
+        Optional<SiteUser> siteUser = this.userRepository.findByUsername(username);
+        if (siteUser.isPresent()) {
+            return siteUser.get();
+        } else {
+            throw new DataNotFoundException("siteuser not found");
+        }
+    }
 }

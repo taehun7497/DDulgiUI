@@ -1,0 +1,414 @@
+<html layout:decorate="~{layout2}">
+<div layout:fragment="content" class="w-full">
+    <!-- 달력 및 세부 내용 -->
+    <div class="flex w-90 lg:flex-row mt-50 lg:mt-20 mx-2 lg:mx-10 lg:mb-10">
+        <div class="divider lg:divider-horizontal"></div>
+        <div>
+            <!-- 달력 -->
+            <div class="flex-grow place-items-center lg:w-2/3">
+                <h1>개인 달력</h1>
+                <div id='calendar'></div>
+                <br>
+                <!-- 이벤트 추가 모달 -->
+                <div id="eventModal"
+                     style="display:none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 1000;">
+                    <div>
+                        <label>달력 번호:</label>
+                        <input type="number" id="calendar_id"><br>
+                        <label>제목:</label>
+                        <input type="text" id="eventTitle"><br>
+                        <label>시작 시간:</label>
+                        <input type="datetime-local" id="eventStart"><br>
+                        <label>종료 시간:</label>
+                        <input type="datetime-local" id="eventEnd"><br>
+                        <button id="saveEvent"
+                                style="border-radius: 10px; padding: 10px 20px; border: none; background-color: black; color: white; text-align: center; display: inline-block; font-size: 16px; cursor: pointer;">
+                            이벤트 저장
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 세부내용 -->
+            <div class="flex-grow place-items-center lg:w-2/3">
+                <!-- 버튼 및 이번 달 일정 -->
+                <div class="w-full px-2 mt-2 flex flex-wrap">
+                    <div class="flex-cole">
+                        <!-- 버튼 -->
+                        <div class="flex justify-between mb-4">
+                            <form action="#" th:action="@{/calendar/{calendarId}(calendarId=${calendarId})}" method="get">
+                                <input type="hidden" name="calendarId" th:value="${calendarId}">
+                                <input type="hidden" name="targetMonth" th:value="${prevMonth}">
+                                <button type="submit"
+                                        class="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded-md text-sm text-gray-800">이전
+                                    달
+                                </button>
+                            </form>
+                            <h1 class="text-xl font-semibold" th:text="${targetMonth + ' 월 일정 리스트'}"></h1>
+                            <input type="hidden" name="targetMonth" th:value="${targetMonth}">
+                            <form action="#" th:action="@{/calendar/{calendarId}(calendarId=${calendarId})}" method="get">
+                                <input type="hidden" name="calendarId" th:value="${calendarId}">
+                                <input type="hidden" name="targetMonth" th:value="${nextMonth}">
+                                <button type="submit"
+                                        class="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded-md text-sm text-gray-800">다음
+                                    달
+                                </button>
+                            </form>
+                        </div>
+                        <!-- 일정 리스트 -->
+                        <div style="overflow-x: auto; width: 700px; height: 500px; border-radius: 10px; border: 0.3px solid lightgray;">
+                            <table class="table" style="border-collapse: collapse; width: 100%;">
+                                <!-- head -->
+                                <thead style="background-color: lightgray;">
+                                <tr>
+                                    <th style="width: 5%;">번호</th>
+                                    <th style="width: 30%;">일정</th>
+                                    <th style="width: 25%;">날짜</th>
+                                    <th style="width: 25%;">사이트</th>
+                                    <th style="width: 15%;">수정</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="event, iterStat : ${eventsForMonth}" class="flex-wrap w-full lg:w-3/4">
+                                    <!-- 이벤트의 순서와 제목, 기간 출력 -->
+                                    <td th:text="${iterStat.index + 1 }"></td>
+                                    <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 200px;"
+                                        title="${event.title}" th:text="${event.title}"></td>
+                                    <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 200px;"
+                                        title="${event.startDate} + '~' + ${event.endDate}"
+                                        th:text="${event.startDate} + '~' + ${event.endDate}"></td>
+                                    <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 200px;">
+                                        사이트 정보
+                                    </td>
+                                    <td> <!-- 수정 버튼 부분 -->
+                                        <!--onclick은 자바스크립트라 타임리프 문법 사용 x-->
+                                        <button class="btn" onclick="openModal(this)" th:data-id="${event.id}">Op
+                                            en modal
+                                        </button>
+                                        <!-- 모달 요소 -->
+                                        <dialog th:id="${'eventModal_' + event.id}" class="modal">
+                                            <div class="modal-box">
+                                                <h3 class="font-bold text-lg">Modify Event</h3>
+                                                <p class="py-4">Press ESC key or click the button below to close</p>
+                                                <div class="modal-action">
+                                                    <form method="dialog">
+                                                        <!-- 수정 양식 추가 -->
+                                                        <label>Event Title:</label>
+                                                        <input type="text" th:id="${'modifiedEventTitle_'+event.id}">
+                                                        <br>
+                                                        <label>Start Time:</label>
+                                                        <input type="datetime-local"
+                                                               th:id="${'modifiedEventStart_'+event.id}">
+                                                        <br>
+                                                        <label>End Time:</label>
+                                                        <input type="datetime-local"
+                                                               th:id="${'modifiedEventEnd_'+event.id}">
+                                                        <br>
+                                                        <!-- 수정 완료 버튼 -->
+                                                        <button class="btn" onclick="saveModifiedEvent(this)"
+                                                                th:data-id="${event.id}">저장
+                                                        </button>
+                                                        <!-- 모달 닫기 버튼 -->
+                                                        <button class="btn" onclick="closeModal(this)"
+                                                                th:data-id="${'eventModal_' + event.id}">
+                                                            Close
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </dialog>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- 일정 추가 버튼 -->
+                    <div class="flex justify-between mt-4">
+                        <button id="addEventBtn"
+                                style="border-radius: 10px; padding: 10px 20px; border: none; background-color: black; color: white; text-align: center; display: inline-block; font-size: 16px; cursor: pointer;">
+                            일정추가
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FullCalendar & Scripts -->
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/long/dist/long.js"></script> <!-- Long.js 라이브러리 추가 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+            });
+            calendar.render(); // FullCalendar 인스턴스를 렌더링합니다.
+
+            const calendarId = window.location.pathname.split('/').pop(); // URL에서 ID 추출
+
+            // 캘린더 ID로 이벤트 불러오기
+            fetchEventsForCalendar(calendarId, calendar);
+
+            document.getElementById('addEventBtn').addEventListener('click', function() {
+                document.getElementById('eventModal').style.display = 'block';
+            });
+
+            document.getElementById('saveEvent').addEventListener('click', function() {
+                addEventToCalendar(calendar);
+            });
+        });
+
+    // events 변수 정의 및 초기화
+    let events = [];
+
+    // 이벤트 데이터를 가져오는 fetchEventsForCalendar 함수 내부에서 events 변수 업데이트
+    function fetchEventsForCalendar(calendarId, calendar) {
+        fetch(`http://localhost:8088/calendar/${calendarId}/events`)
+        .then(response => {
+            const contentType = response.headers.get("content-type");
+            if (!response.ok || !contentType || !contentType.includes("application/json")) {
+                return response.text().then(text => {
+                    throw new Error('서버에서 정상적인 JSON 응답이 아닙니다: ' + text);
+                });
+            }
+            return response.json();
+        })
+        .then(eventsData => {
+            // 가져온 이벤트 데이터를 events 변수에 저장
+            events = eventsData;
+
+            // FullCalendar에 이벤트 추가
+            events.forEach(event => {
+                calendar.addEvent({
+                    title: event.title,
+                    start: event.startDate,
+                    end: event.endDate
+                });
+            });
+        })
+        .catch(error => {
+            console.error('이벤트 불러오기 오류:', error);
+            alert('오류: ' + error.message);
+        });
+    }
+
+    function addEventToCalendar(calendar) { // calendar를 함수 인수로 받아옵니다.
+        var calendar_id = document.getElementById('calendar_id').value;
+        var title = document.getElementById('eventTitle').value;
+        var start = document.getElementById('eventStart').value;
+        var end = document.getElementById('eventEnd').value;
+
+        // 이벤트 객체를 생성합니다.
+        var event = {
+            title: title,
+            start: new Date(start),
+            end: new Date(end)
+        };
+
+        fetch('/calendar/events', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                calendar_id: parseInt(calendar_id, 10),
+                title: title,
+                startDate: event.start.toISOString(),
+                endDate: event.end.toISOString()
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('네트워크 응답이 실패했습니다.');
+            }
+            return response.json();
+        })
+        .then(data => {
+            calendar.addEvent({ // calendar.addEvent를 호출합니다.
+                title: data.title,
+                start: data.startDate,
+                end: data.endDate
+            });
+
+            // 입력 필드 초기화 및 이벤트 모달 숨기기
+            document.getElementById('eventModal').style.display = 'none';
+            document.getElementById('calendar_id').value = '';
+            document.getElementById('eventTitle').value = '';
+            document.getElementById('eventStart').value = '';
+            document.getElementById('eventEnd').value = '';
+        })
+        .catch(error => {
+            console.error('오류:', error);
+            alert('오류: ' + error.message);
+        });
+    }
+
+     // 모달 열기 함수 수정
+    function openModal(button) {
+        var eventId = button.getAttribute('data-id');
+        var modalId = 'eventModal_' + eventId;
+        var modal = document.getElementById(modalId);
+
+
+        if (modal) {
+            modal.showModal();
+        } else {
+            console.error("Modal not found with ID:", modalId);
+        }
+    }
+
+        // 이벤트 ID를 Long으로 변환하는 함수
+        function toLong(eventId) {
+            return Long.fromString(eventId);
+        }
+
+        function saveModifiedEvent(button) {
+        var eventId = button.getAttribute('data-id');
+        var modifiedEventTitle = document.getElementById('modifiedEventTitle_' + eventId).value;
+        var modifiedEventStart = document.getElementById('modifiedEventStart_' + eventId).value;
+        var modifiedEventEnd = document.getElementById('modifiedEventEnd_' + eventId).value;
+
+        console.log("Saving event:", eventId, modifiedEventTitle, modifiedEventStart, modifiedEventEnd);
+
+        var updatedEvent = {
+            title: modifiedEventTitle,
+            startDate: modifiedEventStart,
+            endDate: modifiedEventEnd
+        };
+
+        console.log("Updated event data:", updatedEvent);
+
+        // 이벤트 ID가 '0'이 아닌지 확인
+        if (eventId === '0' || !eventId) {
+            console.error("Invalid event ID:", eventId);
+            return; // 함수를 여기서 종료
+        }
+
+        fetch(`/calendar/modify/${eventId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updatedEvent)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('이벤트 수정 실패');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Event updated successfully", data);
+        })
+        .catch(error => {
+            console.error('이벤트 수정 오류:', error);
+        });
+    }
+
+    // 모달 닫기 함수
+    function closeModal(modalId) {
+        var modal = document.getElementById(modalId);
+        modal.close();
+    }
+    </script>
+
+    <script>
+        let timerInterval;
+    let seconds = 0;
+    let minutes = 0;
+    let hours = 0;
+    let currentEventId; // 현재 기록 중인 이벤트의 ID
+
+    function startTimer(eventId) {
+        // 이전에 실행 중인 타이머가 있으면 정지
+        stopTimer();
+
+        // 새로운 이벤트의 타이머 시작
+        currentEventId = eventId;
+        timerInterval = setInterval(updateTimer, 1000);
+    }
+
+    function stopTimer() {
+        clearInterval(timerInterval);
+        currentEventId = null;
+    }
+
+    function resetTimer() {
+        clearInterval(timerInterval);
+        seconds = 0;
+        minutes = 0;
+        hours = 0;
+        updateTimerDisplay();
+        currentEventId = null;
+    }
+
+    function updateTimer() {
+        seconds++;
+        if (seconds === 60) {
+            seconds = 0;
+            minutes++;
+            if (minutes === 60) {
+                minutes = 0;
+                hours++;
+            }
+        }
+        updateTimerDisplay();
+    }
+
+    function updateTimerDisplay() {
+        const timerElement = document.getElementById('timer');
+        timerElement.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    function saveTimerToEvent() {
+        // 현재 타이머가 실행 중이 아니면 아무것도 하지 않음
+        if (!currentEventId) return;
+
+        const timerValue = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+        // 이벤트 ID를 이용하여 해당 이벤트에 타이머 값을 저장
+        fetch(`/calendar/${currentEventId}/timer`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                timerValue: timerValue
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('타이머 값 저장 실패');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("타이머 값 저장 성공", data);
+            // 성공적으로 저장되면 타이머 초기화
+            resetTimer();
+        })
+        .catch(error => {
+            console.error('타이머 값 저장 오류:', error);
+            alert('오류: ' + error.message);
+        });
+    }
+
+    document.getElementById('startButton').addEventListener('click', function() {
+        const eventId = // 여기에 현재 타이머를 연결할 이벤트의 ID를 가져오는 코드 추가
+        startTimer(eventId);
+    });
+
+    document.getElementById('stopButton').addEventListener('click', stopTimer);
+
+    document.getElementById('resetButton').addEventListener('click', resetTimer);
+
+    document.getElementById('saveTimerButton').addEventListener('click', saveTimerToEvent);
+    </script>
+<!--풋화면-->
+<footer th:replace="~{footer :: footerFragment}"></footer>
+
+</div>
+</html>

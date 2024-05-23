@@ -1,4 +1,4 @@
-package com.korea.dulgiUI.Calendar;
+package com.korea.dulgiUI.calendar;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.korea.dulgiUI.Event.Event;
@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -22,4 +23,8 @@ public class Calendar {
     private List<Event> eventList;
 
     private LocalDateTime createDate;
+
+    private String username;
+    private LocalDate eventDate;
+    private String eventDescription;
 }

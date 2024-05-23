@@ -1,9 +1,7 @@
 <html layout:decorate="~{layout2}">
-<div layout:fragment="content" class="container my-3">
-    <body>
+<div layout:fragment="content" class="w-full">
 
         <!-- 달력 및 세부 내용 -->
-<!--        <div class="flex w-90 lg:flex-row mt-10 lg:mt-20 mx-2 lg:mx-10 lg:mb-10">-->
         <div class="flex w-full lg:flex-row mt-10 lg:mt-20 mx-0 lg:mx-5 lg:mb-10">
             <!-- 달력 -->
             <div class="flex-grow place-items-center lg:w-1/2">
@@ -26,6 +24,7 @@
                             style="border-radius: 10px; padding: 10px 20px; border: none; background-color: black; color: white; text-align: center; display: inline-block; font-size: 16px; cursor: pointer;">
                             이벤트 저장
                         </button>
+<!--                        <button class="btn" onclick="closeModal('eventModal')">Close</button>-->
                     </div>
                 </div>
             </div>
@@ -54,8 +53,7 @@
                                 <input type="hidden" name="calendarId" th:value="${calendarId}">
                                 <input type="hidden" name="targetMonth" th:value="${nextMonth}">
                                 <button type="submit"
-                                    class="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded-md text-sm text-gray-800">다음
-                                    달
+                                    class="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded-md text-sm text-gray-800">다음 달
                                 </button>
                             </form>
                         </div>
@@ -69,7 +67,6 @@
                                         <th style="width: 5%;">번호</th>
                                         <th style="width: 30%;">일정</th>
                                         <th style="width: 25%;">날짜</th>
-                                        <th style="width: 25%;">사이트</th>
                                         <th style="width: 15%;">수정</th>
                                     </tr>
                                 </thead>
@@ -82,14 +79,9 @@
                                         <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 200px;"
                                             title="${event.startDate} + '~' + ${event.endDate}"
                                             th:text="${event.startDate} + '~' + ${event.endDate}"></td>
-                                        <td
-                                            style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 200px;">
-                                            사이트 정보
-                                        </td>
                                         <td> <!-- 수정 버튼 부분 -->
                                             <!--onclick은 자바스크립트라 타임리프 문법 사용 x-->
-                                            <button class="btn" onclick="openModal(this)" th:data-id="${event.id}">Op
-                                                en modal</button>
+                                            <button class="btn" onclick="openModal(this)" th:data-id="${event.id}">Open modal</button>
                                             <!-- 모달 요소 -->
                                             <dialog th:id="${'eventModal_' + event.id}" class="modal">
                                                 <div class="modal-box">
@@ -324,7 +316,6 @@
                 modal.close();
             }
         </script>
-    </body>
 </div>
 
 </html>

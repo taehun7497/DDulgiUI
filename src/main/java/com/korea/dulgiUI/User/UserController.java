@@ -3,6 +3,10 @@ package com.korea.dulgiUI.User;
 import com.korea.dulgiUI.Message;
 import com.korea.dulgiUI.answer.Answer;
 import com.korea.dulgiUI.answer.AnswerService;
+import com.korea.dulgiUI.calendar.Calendar;
+import com.korea.dulgiUI.calendar.CalendarService;
+import com.korea.dulgiUI.comment.Comment;
+import com.korea.dulgiUI.comment.CommentService;
 import com.korea.dulgiUI.email.EmailService;
 import com.korea.dulgiUI.question.Question;
 import com.korea.dulgiUI.question.QuestionService;
@@ -14,10 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
@@ -33,6 +34,7 @@ public class UserController {
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
     private final UserRepository userRepository;
+    private final CommentService commentService;
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/info")
@@ -187,6 +189,39 @@ public class UserController {
             userService.updateUser(user, nickname);
             return "redirect:/user/info";
         }
+    }
+
+    @GetMapping("/UserCalendar/{username}")
+    public String userBoard(Model model,
+                            Principal principal) {
+
+        // 현재 로그인된 사용자의 유저네임을 Principal 객체에서 추출
+        String username = principal.getName();
+
+        // 유저네임을 사용하여 사용자 정보 조회
+        SiteUser user = this.userService.getUserByUsername(username);
+
+        // 사용자 정보가 null인지 확인
+        if (user == null) {
+            return "userNotFound"; // 사용자가 존재하지 않을 경우 적절한 처리 필요
+        }
+
+        // 모델에 사용자 정보 추가
+        model.addAttribute("user", user);
+        List<Question> questions = questionService.findByAuthorId(user.getId());
+        List<Comment> comments = commentService.findByUserId(user.getId());
+        List<Answer> answers = answerService.findByAuthorId(user.getId());
+
+        model.addAttribute("questions", questions);
+        model.addAttribute("comments", comments);
+        model.addAttribute("answers", answers);
+        model.addAttribute("userNickname", user.getNickname());
+        model.addAttribute("userId", user.getId());
+        model.addAttribute("username", user.getUsername());
+        model.addAttribute("email", user.getEmail());
+
+        // 프로필 페이지 뷰 이름 반환
+        return "";
     }
 
     public static class PasswordGenerator {

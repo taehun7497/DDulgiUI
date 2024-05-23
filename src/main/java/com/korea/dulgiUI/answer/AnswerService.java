@@ -88,4 +88,8 @@ public class AnswerService {
         answer.getVoter().add(siteUser); // 투표한 사용자를 답변의 투표자 목록에 추가
         this.answerRepository.save(answer); // 답변 저장
     }
+
+    public List<Answer> findByAuthorId(Long authorId) {
+        return answerRepository.findByAuthorId(authorId);
+    }
 }
